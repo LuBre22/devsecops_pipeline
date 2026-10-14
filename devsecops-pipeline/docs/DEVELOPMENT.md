@@ -123,11 +123,3 @@ werden. "Lokal reproduzierbar" bedeutet nicht "erstmals vollstaendig offline".
   eine Demo richtig, fuer Produktion unbrauchbar.
 - **Keine Signatur der Artefakte.** Image-Signierung und Provenance waeren der
   naechste logische Schritt in Stage 9.
-
-## 8. Naechste Schritte
-
-1. Image-Signierung in Stage 9 und Signaturpruefung vor dem Deployment.
-2. Authentifizierter ZAP-Scan fuer die Endpunkte hinter dem Login.
-3. Trendauswertung ueber `metrics.csv`: Findings pro Lauf im Zeitverlauf.
-4. Policy-Auswertung auf OPA umstellen, damit Gate-Regeln und
-   Cluster-Regeln dieselbe Sprache sprechen.

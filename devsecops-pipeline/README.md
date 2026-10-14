@@ -71,7 +71,7 @@ installieren beziehungsweise die Unit-Tests ausfuehren:
 ```powershell
 cd "C:\Users\WN00235115\OneDrive - WGS 365\Documents\DHBW\Semester 5\IT Security (Graupner)\Entwurf_Pipeline\devsecops-pipeline"
 python -m pip install -r .\requirements-dev.txt
-python -m pytest .\tests -q
+python -m pytest .\tests -vv -s
 ```
 
 Die Pipeline selbst besteht aus Bash-Skripten. Deshalb die folgenden Befehle
@@ -79,6 +79,9 @@ in Git Bash oder WSL ausfuehren:
 
 ```bash
 cd "/mnt/c/Users/WN00235115/OneDrive - WGS 365/Documents/DHBW/Semester 5/IT Security (Graupner)/Entwurf_Pipeline/devsecops-pipeline"
+
+# make test - verbose test progress and console output
+python3 -m pytest tests -vv -s
 
 # make scan WORKLOAD=workloads/01-flask-api/vulnerable
 bash scripts/run-pipeline.sh workloads/01-flask-api/vulnerable
@@ -199,6 +202,9 @@ reports/
 Im Repository liegt bereits ein Beispiellauf unter
 `reports/20261014-101500-demo-dryrun/`, erzeugt aus den Test-Fixtures. So ist
 der Berichtsaufbau sichtbar, bevor der erste echte Lauf gestartet wurde.
+
+Eine Beschreibung aller Unit-Tests, ihrer Erwartungen und ihrer Grenzen steht
+in [`docs/TESTS.md`](docs/TESTS.md).
 
 ## Sicherheitshinweise
 
