@@ -1,0 +1,8 @@
+# Known-vulnerable dependency set. The SCA stage (Trivy fs / Dependency-Check)
+# must report CVEs here; this is the workload that proves SCA adds value
+# that SAST alone cannot provide.
+requests==2.19.1
+PyYAML==5.1
+urllib3==1.24.1
+Jinja2==2.10
+cryptography==2.3

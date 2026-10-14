@@ -1,0 +1,20 @@
+[
+  {
+    "RuleID": "generic-api-key",
+    "Description": "Detected a generic API key",
+    "File": ".env",
+    "StartLine": 3,
+    "Commit": "a1b2c3d4e5f6a7b8",
+    "Secret": "REDACTED",
+    "Match": "REDACTED"
+  },
+  {
+    "RuleID": "aws-access-token",
+    "Description": "Detected an AWS access key",
+    "File": "app.py",
+    "StartLine": 15,
+    "Commit": "a1b2c3d4e5f6a7b8",
+    "Secret": "REDACTED",
+    "Match": "REDACTED"
+  }
+]

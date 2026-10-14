@@ -1,0 +1,34 @@
+{
+  "@version": "2.15.0",
+  "site": [
+    {
+      "@name": "http://app:8080",
+      "alerts": [
+        {
+          "pluginid": "10038",
+          "name": "Content Security Policy header not set",
+          "riskcode": "2",
+          "cweid": "693",
+          "solution": "Set a Content-Security-Policy header on every response",
+          "instances": [
+            {
+              "uri": "/"
+            }
+          ]
+        },
+        {
+          "pluginid": "40012",
+          "name": "Cross Site Scripting (reflected)",
+          "riskcode": "3",
+          "cweid": "79",
+          "solution": "Escape untrusted data before writing it to the response",
+          "instances": [
+            {
+              "uri": "/greet?name=test"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+# Security gate policy (Policy as Code).
+# action: block = fail the pipeline | warn = report only | info = log only
+# Rationale per test class is documented in docs/DEVELOPMENT.md section 4.
+version: 1
+
+gates:
+  # Any leaked credential is non-negotiable: a secret in Git history must be
+  # rotated, regardless of severity rating.
+  secrets:
+    CRITICAL: block
+    HIGH: block
+    MEDIUM: block
+    LOW: block
+    INFO: block
+
+  sast:
+    CRITICAL: block
+    HIGH: block
+    MEDIUM: warn
+    LOW: info
+    INFO: info
+
+  # SCA: HIGH only warns, because an unreachable dependency CVE is often not
+  # exploitable in this application context (lecture slide 38).
+  sca:
+    CRITICAL: block
+    HIGH: warn
+    MEDIUM: warn
+    LOW: info
+    INFO: info
+
+  image:
+    CRITICAL: block
+    HIGH: block
+    MEDIUM: warn
+    LOW: info
+    INFO: info
+
+  # DAST warns only: baseline scans have a high false positive rate and must
+  # not break the build before manual triage (lecture slide 39).
+  dast:
+    CRITICAL: warn
+    HIGH: warn
+    MEDIUM: warn
+    LOW: info
+    INFO: info
+
+  default:
+    CRITICAL: block
+    HIGH: warn
+    MEDIUM: info
+    LOW: info
+    INFO: info

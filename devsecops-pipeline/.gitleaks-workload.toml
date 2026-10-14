@@ -1,0 +1,3 @@
+# No demo-fixture allowlist: the selected workload itself must be scanned.
+[extend]
+useDefault = true

@@ -1,0 +1,96 @@
+# Alternative GitHub Actions workflow for the fast secret, SAST and SCA gates.
+# Container build, image gate and DAST are in the full GitLab pipeline definition.
+name: devsecops
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+  security-events: write     # required to upload SARIF to code scanning
+
+env:
+  WORKLOAD: workloads/01-flask-api/vulnerable
+
+jobs:
+  secrets:
+    name: Stage 1 - secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Gitleaks
+        run: |
+          mkdir -p reports/raw
+          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.18.4 \
+            detect --source /repo --config /repo/.gitleaks.toml \
+            --report-format json --report-path /repo/reports/raw/gitleaks.json \
+            --redact --exit-code 0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: raw-secrets, path: reports/raw }
+
+  sast:
+    name: Stage 2 - SAST
+    runs-on: ubuntu-latest
+    container: returntocorp/semgrep:1.86.0
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p reports/raw
+          semgrep scan --config p/owasp-top-ten --config p/security-audit \
+            --config p/secrets --sarif --output reports/raw/semgrep.sarif \
+            --metrics off "$WORKLOAD"
+        continue-on-error: true
+      - uses: github/codeql-action/upload-sarif@v3
+        with: { sarif_file: reports/raw/semgrep.sarif }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: raw-sast, path: reports/raw }
+
+  sca:
+    name: Stage 3 - SCA and SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trivy filesystem
+        run: |
+          mkdir -p reports/raw
+          docker run --rm -v "$PWD:/w" -w /w aquasec/trivy:0.55.2 \
+            filesystem "$WORKLOAD" --scanners vuln,misconfig,secret \
+            --format json --output reports/raw/trivy-fs.json --exit-code 0
+      - name: Syft SBOM
+        run: |
+          docker run --rm -v "$PWD:/w" -w /w anchore/syft:v1.14.0 \
+            scan "dir:$WORKLOAD" -o cyclonedx-json=reports/raw/sbom.cdx.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: raw-sca, path: reports/raw }
+
+  gate:
+    name: Stage 8 - aggregate and gate
+    runs-on: ubuntu-latest
+    needs: [secrets, sast, sca]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/download-artifact@v4
+        with: { path: downloaded }
+      - name: Merge raw reports
+        run: |
+          mkdir -p "reports/$GITHUB_RUN_ID/raw"
+          find downloaded -type f -exec cp {} "reports/$GITHUB_RUN_ID/raw/" \;
+      - name: Collect, report and evaluate the gate
+        run: |
+          python scripts/collect.py --run-dir "reports/$GITHUB_RUN_ID" --workload "$WORKLOAD"
+          python scripts/report.py --reports-dir reports
+          python scripts/gate.py --findings "reports/$GITHUB_RUN_ID/findings.json" \
+            --policy policy/thresholds.yaml --suppressions policy/suppressions.json \
+            --out "reports/$GITHUB_RUN_ID/gate.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: findings-report, path: reports }

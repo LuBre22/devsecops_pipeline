@@ -1,0 +1,66 @@
+{
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "semgrep",
+          "semanticVersion": "1.86.0",
+          "rules": [
+            {
+              "id": "python.lang.security.audit.formatted-sql-query",
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "python.flask.security.audit.debug-enabled",
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "python.lang.security.audit.formatted-sql-query",
+          "level": "error",
+          "message": {
+            "text": "Detected SQL statement built from user input"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "app.py"
+                },
+                "region": {
+                  "startLine": 42
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "python.flask.security.audit.debug-enabled",
+          "message": {
+            "text": "Flask app is run with debug=True"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "app.py"
+                },
+                "region": {
+                  "startLine": 76
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

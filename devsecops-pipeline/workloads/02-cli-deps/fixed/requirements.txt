@@ -1,0 +1,9 @@
+# Upgraded dependency set. Every CVE reported for the vulnerable variant has
+# a fixed version available, which is exactly why the gate blocks on
+# "CRITICAL with a fix available" rather than on every CVE.
+requests==2.32.3
+PyYAML==6.0.2
+urllib3==2.2.3
+Jinja2==3.1.4
+cryptography==43.0.1
+certifi==2024.8.30

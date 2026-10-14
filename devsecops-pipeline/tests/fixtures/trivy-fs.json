@@ -1,0 +1,37 @@
+{
+  "SchemaVersion": 2,
+  "ArtifactName": "workloads/02-cli-deps/vulnerable",
+  "Results": [
+    {
+      "Target": "requirements.txt",
+      "Class": "lang-pkgs",
+      "Type": "pip",
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "CVE-2020-14343",
+          "PkgName": "PyYAML",
+          "InstalledVersion": "5.1",
+          "FixedVersion": "5.4",
+          "Severity": "CRITICAL",
+          "Title": "arbitrary code execution through the full_load method"
+        },
+        {
+          "VulnerabilityID": "CVE-2019-11324",
+          "PkgName": "urllib3",
+          "InstalledVersion": "1.24.1",
+          "FixedVersion": "1.24.2",
+          "Severity": "HIGH",
+          "Title": "certificate verification bypass with a custom ssl_context"
+        },
+        {
+          "VulnerabilityID": "CVE-2020-26137",
+          "PkgName": "urllib3",
+          "InstalledVersion": "1.24.1",
+          "FixedVersion": "1.25.9",
+          "Severity": "MEDIUM",
+          "Title": "CRLF injection via the request method"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "summary": {
+    "fatal": 1,
+    "warn": 2
+  },
+  "details": [
+    {
+      "code": "CIS-DI-0001",
+      "title": "Create a user for the container",
+      "level": "WARN",
+      "alerts": [
+        "last user should not be root"
+      ]
+    },
+    {
+      "code": "DKL-DI-0005",
+      "title": "Clear apt-get caches",
+      "level": "INFO",
+      "alerts": [
+        "cache left in the image layer"
+      ]
+    },
+    {
+      "code": "CIS-DI-0010",
+      "title": "Do not store credentials in ENV",
+      "level": "FATAL",
+      "alerts": [
+        "suspicious ENV key found: API_TOKEN"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+report:
+  title: Quarterly summary
+  format: markdown
+  source: https://example.org/data.json

@@ -1,0 +1,15 @@
+# Gitleaks configuration. Extends the shipped default ruleset and excludes the
+# intentionally vulnerable fixtures from the *fixed* variants only, so the
+# vulnerable workloads still trigger findings for the demo.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Documentation and report artefacts"
+paths = [
+  '''docs/.*\.md''',
+  '''reports/.*''',
+  '''README\.md''',
+  '''workloads/.*/vulnerable/.*''',
+  '''tests/fixtures/.*''',
+]

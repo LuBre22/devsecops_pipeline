@@ -1,0 +1,235 @@
+# =============================================================================
+# DevSecOps pipeline - GitLab CI definition (requirement A-04: the pipeline is
+# triggered automatically by a push or a merge request, no manual action).
+#
+# The stage order implements fail-fast: cheap scans first, the expensive
+# dynamic scan last. Every stage publishes its raw report as an artifact so a
+# failed run is still fully analysable.
+# =============================================================================
+stages:
+  - secrets
+  - sast
+  - sca
+  - build
+  - image-scan
+  - image-gate
+  - deploy-test
+  - dast
+  - report
+  - publish
+
+variables:
+  WORKLOAD: "workloads/01-flask-api/vulnerable"
+  IMAGE_NAME: "$CI_REGISTRY_IMAGE/demo"
+  IMAGE_TAG: "$CI_REGISTRY_IMAGE/demo:$CI_COMMIT_SHORT_SHA"
+  GIT_DEPTH: "0"               # full history, so the secret scan sees old commits
+  DOCKER_DRIVER: overlay2
+  TRIVY_CACHE_DIR: .trivycache
+  TRIVY_NO_PROGRESS: "true"
+
+# Automatic trigger: every push to a branch and every merge request.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+.report_artifacts: &report_artifacts
+  artifacts:
+    when: always
+    expire_in: 4 weeks
+    paths:
+      - reports/
+
+# -----------------------------------------------------------------------------
+# Stage 1 - secret scanning. Blocks unconditionally: a leaked credential is
+# never acceptable, not even at LOW severity.
+# -----------------------------------------------------------------------------
+secret-scan:
+  stage: secrets
+  image:
+    name: zricethezav/gitleaks:v8.18.4
+    entrypoint: [""]
+  script:
+    - mkdir -p reports/raw
+    - gitleaks detect --source . --config .gitleaks.toml
+        --report-format json --report-path reports/raw/gitleaks-history.json
+        --redact --exit-code 0
+    - cd "$WORKLOAD" && gitleaks detect --source . --no-git
+        --config "$CI_PROJECT_DIR/.gitleaks-workload.toml"
+        --report-format json --report-path "$CI_PROJECT_DIR/reports/raw/gitleaks-workload.json"
+        --redact --exit-code 0
+    - test -s "$CI_PROJECT_DIR/reports/raw/gitleaks-workload.json"
+  <<: *report_artifacts
+
+# -----------------------------------------------------------------------------
+# Stage 2 - SAST
+# -----------------------------------------------------------------------------
+semgrep:
+  stage: sast
+  image: returntocorp/semgrep:1.86.0
+  script:
+    - mkdir -p reports/raw
+    - semgrep scan --config p/owasp-top-ten --config p/security-audit
+        --config p/secrets --sarif --output reports/raw/semgrep.sarif
+        --metrics off "$WORKLOAD"
+  allow_failure: true          # the gate decides, not the tool exit code
+  <<: *report_artifacts
+
+bandit:
+  stage: sast
+  image: python:3.12-slim
+  script:
+    - mkdir -p reports/raw
+    - python -m pip install --no-cache-dir "bandit[sarif]==1.7.9"
+    - bandit -r "$WORKLOAD" -f sarif -o reports/raw/bandit.sarif --exit-zero
+  allow_failure: true
+  <<: *report_artifacts
+
+# -----------------------------------------------------------------------------
+# Stage 3 - SCA and SBOM
+# -----------------------------------------------------------------------------
+dependency-scan:
+  stage: sca
+  image:
+    name: aquasec/trivy:0.55.2
+    entrypoint: [""]
+  cache:
+    key: trivy-db
+    paths: [.trivycache]
+  script:
+    - mkdir -p reports/raw
+    - trivy filesystem "$WORKLOAD" --scanners vuln,misconfig,secret
+        --format json --output reports/raw/trivy-fs.json --exit-code 0
+  allow_failure: true
+  <<: *report_artifacts
+
+sbom:
+  stage: sca
+  image:
+    name: anchore/syft:v1.14.0
+    entrypoint: [""]
+  script:
+    - mkdir -p reports/raw
+    - syft scan "dir:$WORKLOAD" -o cyclonedx-json=reports/raw/sbom.cdx.json
+  allow_failure: true
+  <<: *report_artifacts
+
+# Early gate: stop before the expensive stages when the cheap scans block.
+early-gate:
+  stage: sca
+  needs: [secret-scan, semgrep, bandit, dependency-scan]
+  image: python:3.12-slim
+  script:
+    - mkdir -p reports/$CI_PIPELINE_ID && cp -r reports/raw reports/$CI_PIPELINE_ID/
+    - python scripts/collect.py --run-dir "reports/$CI_PIPELINE_ID" --workload "$WORKLOAD"
+    - python scripts/gate.py --findings "reports/$CI_PIPELINE_ID/findings.json"
+        --policy policy/thresholds.yaml --suppressions policy/suppressions.json
+        --out "reports/$CI_PIPELINE_ID/gate.json"
+  <<: *report_artifacts
+
+# -----------------------------------------------------------------------------
+# Stage 4 and 5 - build and image scan
+# -----------------------------------------------------------------------------
+build-image:
+  stage: build
+  image: docker:27.3.1
+  services: [docker:27.3.1-dind]
+  script:
+    - mkdir -p reports/raw
+    - docker run --rm -i hadolint/hadolint:2.12.0-alpine hadolint --format sarif -
+        < "$WORKLOAD/Dockerfile" > reports/raw/hadolint.sarif || true
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - docker build --pull -t "$IMAGE_TAG" "$WORKLOAD"
+    - docker save "$IMAGE_TAG" -o image.tar
+  artifacts:
+    expire_in: 1 day
+    paths: [image.tar, reports/raw/hadolint.sarif]
+  rules:
+    - exists: ["$WORKLOAD/Dockerfile"]
+
+image-scan:
+  stage: image-scan
+  image:
+    name: aquasec/trivy:0.55.2
+    entrypoint: [""]
+  needs: [build-image]
+  script:
+    - mkdir -p reports/raw
+    - trivy image --input image.tar --scanners vuln,secret
+        --format json --output reports/raw/trivy-image.json --exit-code 0
+  allow_failure: true
+  <<: *report_artifacts
+
+# Stop on blocking image findings before starting the application container.
+image-gate:
+  stage: image-gate
+  needs: [build-image, image-scan]
+  image: python:3.12-slim
+  script:
+    - mkdir -p reports/$CI_PIPELINE_ID && cp -r reports/raw reports/$CI_PIPELINE_ID/
+    - python scripts/collect.py --run-dir "reports/$CI_PIPELINE_ID" --workload "$WORKLOAD"
+    - python scripts/gate.py --findings "reports/$CI_PIPELINE_ID/findings.json"
+        --policy policy/thresholds.yaml --suppressions policy/suppressions.json
+        --out "reports/$CI_PIPELINE_ID/gate.json"
+  <<: *report_artifacts
+
+# -----------------------------------------------------------------------------
+# Stage 6 and 7 - ephemeral test instance and DAST
+# -----------------------------------------------------------------------------
+dast:
+  stage: dast
+  image: docker:27.3.1
+  services: [docker:27.3.1-dind]
+  needs: [build-image]
+  script:
+    - docker load -i image.tar
+    - docker network create dast-net
+    - docker run -d --name app --network dast-net
+        -e API_TOKEN="$TEST_API_TOKEN" "$IMAGE_TAG"
+    - sleep 10
+    - mkdir -p reports/raw
+    - docker run --rm --network dast-net -v "$PWD/reports/raw:/zap/wrk:rw" --user root
+        ghcr.io/zaproxy/zaproxy:2.15.0 zap-baseline.py
+        -t http://app:8080 -J zap.json -r zap.html -m 2 -I || true
+  after_script:
+    - docker rm -f app || true
+    - docker network rm dast-net || true
+  allow_failure: true           # warn only, per policy/thresholds.yaml
+  <<: *report_artifacts
+
+# -----------------------------------------------------------------------------
+# Stage 8 - aggregate, gate, report. Runs even when earlier stages failed.
+# -----------------------------------------------------------------------------
+security-gate:
+  stage: report
+  image: python:3.12-slim
+  when: always
+  script:
+    - RUN_DIR="reports/$CI_PIPELINE_ID"
+    - mkdir -p "$RUN_DIR" && cp -r reports/raw "$RUN_DIR/" 2>/dev/null || true
+    - python scripts/collect.py --run-dir "$RUN_DIR" --workload "$WORKLOAD"
+    - python scripts/report.py --reports-dir reports
+    - 'if [ -n "$DEFECTDOJO_URL" ] && [ -n "$DEFECTDOJO_TOKEN" ]; then python scripts/defectdojo_import.py --run-dir "$RUN_DIR"; fi'
+    - python scripts/gate.py --findings "$RUN_DIR/findings.json"
+        --policy policy/thresholds.yaml --suppressions policy/suppressions.json
+        --out "$RUN_DIR/gate.json"
+  artifacts:
+    when: always
+    expire_in: 4 weeks
+    paths:
+      - reports/
+
+# -----------------------------------------------------------------------------
+# Stage 9 - publish. Only reachable when the gate passed.
+# -----------------------------------------------------------------------------
+publish:
+  stage: publish
+  image: docker:27.3.1
+  services: [docker:27.3.1-dind]
+  needs: [security-gate, build-image]
+  script:
+    - docker load -i image.tar
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - docker push "$IMAGE_TAG"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
