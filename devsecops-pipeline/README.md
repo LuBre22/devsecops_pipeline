@@ -19,6 +19,8 @@ Schwellwert ueberschritten wird.
 
 ## Schnellstart
 
+Für Windows (ohne make) siehe weiter unten.
+
 Voraussetzungen: Docker (oder Podman), Git, Python 3.10+, Bash. Die Scanner
 laufen als Container mit festgepinnten Versionen. Beim ersten Lauf muessen die
 Images und Scanner-Regeldatenbanken erreichbar sein; mit vorab geladenen Images
@@ -55,6 +57,69 @@ Ohne Container-Runtime laesst sich wenigstens die Pipeline-Logik pruefen:
 
 ```bash
 make test      # 11 Unit-Tests fuer Normalisierung und Gate, keine Container noetig
+```
+
+## Windows ohne `make`
+
+Wenn `make` unter Windows nicht installiert ist, koennen die Ziele direkt
+aus PowerShell oder Git Bash ausgefuehrt werden. Docker Desktop muss fuer
+echte Pipeline-Laeufe gestartet sein.
+
+PowerShell: in das Pipeline-Verzeichnis wechseln und die Python-Abhaengigkeiten
+installieren beziehungsweise die Unit-Tests ausfuehren:
+
+```powershell
+cd "C:\Users\WN00235115\OneDrive - WGS 365\Documents\DHBW\Semester 5\IT Security (Graupner)\Entwurf_Pipeline\devsecops-pipeline"
+python -m pip install -r .\requirements-dev.txt
+python -m pytest .\tests -q
+```
+
+Die Pipeline selbst besteht aus Bash-Skripten. Deshalb die folgenden Befehle
+in Git Bash oder WSL ausfuehren:
+
+```bash
+cd "/mnt/c/Users/WN00235115/OneDrive - WGS 365/Documents/DHBW/Semester 5/IT Security (Graupner)/Entwurf_Pipeline/devsecops-pipeline"
+
+# make scan WORKLOAD=workloads/01-flask-api/vulnerable
+bash scripts/run-pipeline.sh workloads/01-flask-api/vulnerable
+
+# make scan WORKLOAD=workloads/01-flask-api/fixed
+bash scripts/run-pipeline.sh workloads/01-flask-api/fixed
+```
+
+Der Lauf mit `vulnerable` soll das Gate mit Exit-Code `1` abbrechen. Der Lauf
+mit `fixed` soll mit Exit-Code `0` bestehen. Die sechs Laeufe von `make demo`
+entsprechen diesen direkten Aufrufen:
+
+```bash
+set +e
+bash scripts/run-pipeline.sh workloads/01-flask-api/vulnerable
+bash scripts/run-pipeline.sh workloads/02-cli-deps/vulnerable
+bash scripts/run-pipeline.sh workloads/03-container-service/vulnerable
+set -e
+
+bash scripts/run-pipeline.sh workloads/01-flask-api/fixed
+bash scripts/run-pipeline.sh workloads/02-cli-deps/fixed
+bash scripts/run-pipeline.sh workloads/03-container-service/fixed
+```
+
+Weitere `make`-Ersatzbefehle:
+
+```powershell
+# make report
+python .\scripts\report.py
+Get-Content .\reports\FINDINGS_REPORT.md
+```
+
+```bash
+# make tooling-up
+docker compose -f infra/docker-compose.tooling.yml up -d
+
+# make tooling-down
+docker compose -f infra/docker-compose.tooling.yml down -v
+
+# make clean
+rm -rf reports/*/ reports/FINDINGS_REPORT.md reports/metrics.csv
 ```
 
 ## Die neun Stages
