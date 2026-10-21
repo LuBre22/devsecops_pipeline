@@ -1,0 +1,111 @@
+[
+  {
+    "workload": "01-flask-api",
+    "variant": "vulnerable",
+    "exit_code": 1,
+    "run_id": "20261021-080607-01-flask-api-vulnerable",
+    "findings": 35,
+    "blocking": 7,
+    "warnings": 25,
+    "tools_with_reports": [
+      "bandit",
+      "gitleaks",
+      "semgrep",
+      "trivy-fs"
+    ],
+    "stopped_at": "Vorab-Gate",
+    "seconds": 139.7
+  },
+  {
+    "workload": "01-flask-api",
+    "variant": "fixed",
+    "exit_code": 1,
+    "run_id": "20261021-080826-01-flask-api-fixed",
+    "findings": 309,
+    "blocking": 49,
+    "warnings": 106,
+    "tools_with_reports": [
+      "bandit",
+      "dockle",
+      "gitleaks",
+      "hadolint",
+      "semgrep",
+      "trivy-fs",
+      "trivy-image"
+    ],
+    "stopped_at": "Image-Gate",
+    "seconds": 177.8
+  },
+  {
+    "workload": "02-cli-deps",
+    "variant": "vulnerable",
+    "exit_code": 1,
+    "run_id": "20261021-081124-02-cli-deps-vulnerable",
+    "findings": 41,
+    "blocking": 5,
+    "warnings": 33,
+    "tools_with_reports": [
+      "bandit",
+      "gitleaks",
+      "semgrep",
+      "trivy-fs"
+    ],
+    "stopped_at": "Vorab-Gate",
+    "seconds": 68.7
+  },
+  {
+    "workload": "02-cli-deps",
+    "variant": "fixed",
+    "exit_code": 1,
+    "run_id": "20261021-081233-02-cli-deps-fixed",
+    "findings": 19,
+    "blocking": 1,
+    "warnings": 16,
+    "tools_with_reports": [
+      "bandit",
+      "gitleaks",
+      "semgrep",
+      "trivy-fs"
+    ],
+    "stopped_at": "Vorab-Gate",
+    "seconds": 125.0
+  },
+  {
+    "workload": "03-container-service",
+    "variant": "vulnerable",
+    "exit_code": 1,
+    "run_id": "20261021-081442-03-container-service-vulnerable",
+    "findings": 15,
+    "blocking": 9,
+    "warnings": 2,
+    "tools_with_reports": [
+      "bandit",
+      "gitleaks",
+      "semgrep",
+      "trivy-fs"
+    ],
+    "stopped_at": "Vorab-Gate",
+    "seconds": 107.8
+  },
+  {
+    "workload": "03-container-service",
+    "variant": "fixed",
+    "exit_code": 0,
+    "run_id": "20261021-081626-03-container-service-fixed",
+    "findings": 6,
+    "blocking": 0,
+    "warnings": 3,
+    "tools_with_reports": [
+      "bandit",
+      "dockle",
+      "gitleaks",
+      "hadolint",
+      "owasp-zap",
+      "semgrep",
+      "trivy-fs",
+      "trivy-image"
+    ],
+    "stopped_at": "Ende",
+    "seconds": 565.1
+  }
+]

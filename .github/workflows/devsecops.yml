@@ -1,0 +1,48 @@
+name: DevSecOps demo verification
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: devsecops-pipeline
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest tests -q
+  pipeline:
+    needs: tests
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        program: [01-flask-api, 02-cli-deps, 03-container-service]
+        variant: [vulnerable, fixed]
+    defaults:
+      run:
+        working-directory: devsecops-pipeline
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/prepare.py
+      # Exit 1 is expected only for vulnerable code. Technical errors (2),
+      # unexpected PASS, or a rejection of fixed code fail the verification.
+      - run: python scripts/demo.py --workload workloads/${{ matrix.program }}/${{ matrix.variant }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidence-${{ matrix.program }}-${{ matrix.variant }}
+          path: devsecops-pipeline/reports/
+          if-no-files-found: error

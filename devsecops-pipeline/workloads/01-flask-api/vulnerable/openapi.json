@@ -1,0 +1,83 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "01-flask-api",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://app:8080"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful demo response"
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful demo response"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string",
+              "default": "alice"
+            },
+            "example": "alice"
+          }
+        ]
+      }
+    },
+    "/greet": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful demo response"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string",
+              "default": "demo"
+            },
+            "example": "demo"
+          }
+        ]
+      }
+    },
+    "/hash": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful demo response"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "value",
+            "schema": {
+              "type": "string",
+              "default": "demo"
+            },
+            "example": "demo"
+          }
+        ]
+      }
+    }
+  }
+}

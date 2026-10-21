@@ -1,9 +1,7 @@
 # Intentionally bad container build. Expected findings:
 #   old base image with OS CVEs, root user, secret baked into an ENV layer,
 #   package manager cache left in the image, no healthcheck.
-FROM alpine:3.9
-
-RUN apk add --no-cache python3
+FROM python@sha256:e191a71397fd61fbddb6712cd43ef9a2c17df0b5e7ba67607128554cd6bff267
 
 WORKDIR /app
 COPY . .

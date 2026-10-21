@@ -1,12 +1,12 @@
-# Gitleaks configuration. Extends the shipped default ruleset and excludes the
-# intentionally vulnerable fixtures from the *fixed* variants only, so the
-# vulnerable workloads still trigger findings for the demo.
+# Repository/history scan. Only deliberate negative examples are allowlisted.
+# The separate workload scan uses .gitleaks-workload.toml with NO such exclusion.
 [extend]
 useDefault = true
 
 [allowlist]
 description = "Documentation and report artefacts"
 paths = [
+  '''docs/validation/.*''',
   '''docs/.*\.md''',
   '''reports/.*''',
   '''README\.md''',

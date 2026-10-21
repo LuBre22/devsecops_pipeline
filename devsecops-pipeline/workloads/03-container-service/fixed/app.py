@@ -20,12 +20,19 @@ DATA_ROOT = pathlib.Path(os.environ.get("DATA_ROOT", "/app/data")).resolve()
 
 
 class Handler(http.server.BaseHTTPRequestHandler):
+    server_version = 'DemoService'
+    sys_version = ''
+
     def _json(self, status: int, payload: dict) -> None:
         body = json.dumps(payload).encode()
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'")
+        self.send_header('Cache-Control', 'no-store')
+        self.send_header('X-Frame-Options', 'DENY')
+        self.send_header('Referrer-Policy', 'no-referrer')
         self.end_headers()
         self.wfile.write(body)
 

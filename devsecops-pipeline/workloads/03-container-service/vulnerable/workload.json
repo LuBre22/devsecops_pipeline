@@ -1,0 +1,7 @@
+{
+  "kind": "web",
+  "smoke_paths": [
+    "/health",
+    "/file?name=example.txt"
+  ]
+}

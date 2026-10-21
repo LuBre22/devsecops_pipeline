@@ -1,0 +1,12 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+      - id: gitleaks
+        args: ['--config', 'devsecops-pipeline/.gitleaks.toml']
+  - repo: https://github.com/returntocorp/semgrep
+    rev: v1.86.0
+    hooks:
+      - id: semgrep
+        args: ['--config', 'devsecops-pipeline/policy/semgrep.yml', '--error', '--metrics', 'off', '--disable-version-check']
+        exclude: '(^|/)(vulnerable|tests|validation)/'

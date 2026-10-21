@@ -1,8 +1,9 @@
-# Known-vulnerable dependency set. The SCA stage (Trivy fs / Dependency-Check)
-# must report CVEs here; this is the workload that proves SCA adds value
-# that SAST alone cannot provide.
+# Intentionally vulnerable, mutually compatible Python 3.8 demo environment.
 requests==2.19.1
-PyYAML==5.1
-urllib3==1.24.1
-Jinja2==2.10
-cryptography==2.3
+urllib3==1.23
+PyYAML==5.4.1
+Jinja2==2.10.1
+MarkupSafe==2.0.1
+certifi==2024.8.30
+chardet==3.0.4
+idna==2.7

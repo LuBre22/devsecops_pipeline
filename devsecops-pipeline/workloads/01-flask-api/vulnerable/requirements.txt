@@ -1,4 +1,7 @@
-# Outdated on purpose - the SCA stage must flag these.
+# Intentionally vulnerable; transitive packages are compatible and pinned.
 Flask==2.0.1
 Werkzeug==2.0.1
 Jinja2==3.0.1
+MarkupSafe==2.0.1
+itsdangerous==2.0.1
+click==8.0.4

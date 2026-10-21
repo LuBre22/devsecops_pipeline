@@ -18,6 +18,8 @@ SEVERITY_ORDER = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
 def load_runs(reports_dir: pathlib.Path) -> list[dict]:
     runs = []
     for findings in sorted(reports_dir.glob("*/findings.json")):
+        if findings.parent.name == 'example-run':
+            continue  # Historical fixture output is not a real execution.
         run = json.loads(findings.read_text())
         timing = findings.parent / "timings.json"
         run["timings"] = json.loads(timing.read_text()) if timing.exists() else {}
@@ -42,13 +44,24 @@ def render(runs: list[dict]) -> str:
         return "\n".join(md)
 
     md += ["## 1. Run overview", "",
-           table(["Run", "Workload", "Branch", "Commit", "Tools", "Findings", "Gate"],
+           table(["Run", "Workload", "Branch", "Commit", "Tools", "Findings", "Blocking", "Suppressed", "Gate"],
                  [[r["run_id"], r.get("workload", ""), r.get("branch", ""),
                    (r.get("commit_hash") or "")[:8], len(r.get("tools", [])),
                    len(r.get("findings", [])),
-                   "PASS" if r.get("gate", {}).get("passed") else "FAIL"]
+                   r.get('gate', {}).get('blocking', ''), r.get('gate', {}).get('suppressed', ''),
+                   r.get('gate', {}).get('status') or ('PASS' if r.get('gate', {}).get('passed') else ('FAIL' if r.get('gate') else 'PENDING'))]
                   for r in runs]), ""]
 
+    md += ['## Execution status', '']
+    for r in runs:
+        md += [f"### {r['run_id']}", '', table(['Check', 'Status', 'Reason / error'],
+            [[name, state.get('status', ''), state.get('error') or state.get('reason', '')]
+             for name, state in r.get('scan_status', {}).items()]), '']
+        for error in r.get('gate', {}).get('errors', []):
+            md += [f'- Technical error: {error}', '']
+        for finding in r.get('gate', {}).get('suppressed_findings', []):
+            entry = finding['suppression']
+            md += [f"- Reviewed exception `{finding['id']}`: {entry['justification']} Owner: {entry['owner']}; expires {entry['expires_at']}.", '']
     md += ["## 2. Findings per severity and test class", ""]
     for r in runs:
         counts = defaultdict(Counter)
@@ -61,17 +74,18 @@ def render(runs: list[dict]) -> str:
         md += [f"### {r['run_id']} - {r.get('workload', '')}", "",
                table(["Test class"] + SEVERITY_ORDER, rows), ""]
 
-    md += ["## 3. Findings detail (blocking and high severity)", ""]
+    md += ["## 3. HIGH/CRITICAL findings (including reviewed exceptions)", ""]
     for r in runs:
         interesting = [f for f in r.get("findings", [])
                        if f["severity"] in ("CRITICAL", "HIGH")][:40]
         if not interesting:
             md += [f"### {r['run_id']}", "", "_No critical or high findings._", ""]
             continue
+        decisions = {(d['id'], d['test_class']): d['action'] for d in r.get('gate', {}).get('decisions', [])}
         md += [f"### {r['run_id']}", "",
-               table(["Severity", "Tool", "Rule / CVE", "Location", "Title", "Remediation"],
+               table(["Severity", "Tool", "Rule / CVE", "Location", "Title", "Remediation", "Gate action"],
                      [[f["severity"], f["tool"], f["cve_id"] or f["rule_id"],
-                       f["location"][:60], f["title"][:80], f["remediation"][:60]]
+                       f["location"][:60], f["title"][:80], f["remediation"][:60], decisions.get((f['id'], f['test_class']), 'not evaluated')]
                       for f in interesting]), ""]
 
     md += ["## 4. Stage duration (fail-fast evidence)", ""]
@@ -119,7 +133,7 @@ def main() -> int:
     args = ap.parse_args()
 
     runs = load_runs(pathlib.Path(args.reports_dir))
-    pathlib.Path(args.out).write_text(render(runs))
+    pathlib.Path(args.out).write_text(render(runs), encoding='utf-8')
     write_metrics(runs, pathlib.Path(args.metrics))
     print(f"[report] {len(runs)} runs -> {args.out} and {args.metrics}")
     return 0

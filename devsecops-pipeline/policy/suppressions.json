@@ -1,4 +1,15 @@
 {
   "_comment": "Add only justified, owner-assigned, time-boxed exceptions.",
-  "suppressions": []
+  "suppressions": [
+    {
+      "finding_id": "dockle:DKL-DI-0004",
+      "owner": "DevSecOps project group",
+      "expires_at": "2026-11-20",
+      "justification": "Reviewed official Python Alpine build layer: initial apk add uses --no-cache. The later apk add --no-network resolves local shared-library dependencies. Dockle 0.4.14 mistakes this for a cached network installation. Only accepted with the exact base digest, exact inherited command and successful empty-package-cache inspection. Re-review on scanner/base updates or expiry.",
+      "workloads": ["01-flask-api-fixed", "02-cli-deps-fixed", "03-container-service-fixed"],
+      "base_image": "python@sha256:1fd55c2f838c4f76262f9eeed899ff9168ea96ac383c61667d6f204325e1f169",
+      "evidence_contains": "xargs -rt apk add --no-network --virtual .python-rundeps",
+      "required_check": "package-cache-empty"
+    }
+  ]
 }

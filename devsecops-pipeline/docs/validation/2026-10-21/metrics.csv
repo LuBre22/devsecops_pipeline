@@ -1,0 +1,42 @@
+run_id,workload,commit,tool,test_class,severity,count
+20261021-080607-01-flask-api-vulnerable,01-flask-api-vulnerable,unknown,Bandit,sast,HIGH,3
+20261021-080607-01-flask-api-vulnerable,01-flask-api-vulnerable,unknown,Bandit,sast,MEDIUM,3
+20261021-080607-01-flask-api-vulnerable,01-flask-api-vulnerable,unknown,Semgrep OSS,sast,HIGH,4
+20261021-080607-01-flask-api-vulnerable,01-flask-api-vulnerable,unknown,Semgrep OSS,sast,MEDIUM,6
+20261021-080607-01-flask-api-vulnerable,01-flask-api-vulnerable,unknown,trivy-fs,sca,HIGH,4
+20261021-080607-01-flask-api-vulnerable,01-flask-api-vulnerable,unknown,trivy-fs,sca,LOW,3
+20261021-080607-01-flask-api-vulnerable,01-flask-api-vulnerable,unknown,trivy-fs,sca,MEDIUM,12
+20261021-080826-01-flask-api-fixed,01-flask-api-fixed,unknown,Bandit,sast,LOW,3
+20261021-080826-01-flask-api-fixed,01-flask-api-fixed,unknown,Bandit,sast,MEDIUM,2
+20261021-080826-01-flask-api-fixed,01-flask-api-fixed,unknown,Semgrep OSS,sast,MEDIUM,1
+20261021-080826-01-flask-api-fixed,01-flask-api-fixed,unknown,dockle,image,CRITICAL,1
+20261021-080826-01-flask-api-fixed,01-flask-api-fixed,unknown,dockle,image,INFO,2
+20261021-080826-01-flask-api-fixed,01-flask-api-fixed,unknown,trivy-fs,sca,LOW,1
+20261021-080826-01-flask-api-fixed,01-flask-api-fixed,unknown,trivy-fs,sca,MEDIUM,9
+20261021-080826-01-flask-api-fixed,01-flask-api-fixed,unknown,trivy-image,image,HIGH,48
+20261021-080826-01-flask-api-fixed,01-flask-api-fixed,unknown,trivy-image,image,INFO,1
+20261021-080826-01-flask-api-fixed,01-flask-api-fixed,unknown,trivy-image,image,LOW,147
+20261021-080826-01-flask-api-fixed,01-flask-api-fixed,unknown,trivy-image,image,MEDIUM,94
+20261021-081124-02-cli-deps-vulnerable,02-cli-deps-vulnerable,unknown,Bandit,sast,HIGH,1
+20261021-081124-02-cli-deps-vulnerable,02-cli-deps-vulnerable,unknown,Bandit,sast,MEDIUM,2
+20261021-081124-02-cli-deps-vulnerable,02-cli-deps-vulnerable,unknown,Semgrep OSS,sast,HIGH,1
+20261021-081124-02-cli-deps-vulnerable,02-cli-deps-vulnerable,unknown,trivy-fs,sca,CRITICAL,3
+20261021-081124-02-cli-deps-vulnerable,02-cli-deps-vulnerable,unknown,trivy-fs,sca,HIGH,14
+20261021-081124-02-cli-deps-vulnerable,02-cli-deps-vulnerable,unknown,trivy-fs,sca,LOW,3
+20261021-081124-02-cli-deps-vulnerable,02-cli-deps-vulnerable,unknown,trivy-fs,sca,MEDIUM,17
+20261021-081233-02-cli-deps-fixed,02-cli-deps-fixed,unknown,trivy-fs,sca,CRITICAL,1
+20261021-081233-02-cli-deps-fixed,02-cli-deps-fixed,unknown,trivy-fs,sca,HIGH,9
+20261021-081233-02-cli-deps-fixed,02-cli-deps-fixed,unknown,trivy-fs,sca,LOW,2
+20261021-081233-02-cli-deps-fixed,02-cli-deps-fixed,unknown,trivy-fs,sca,MEDIUM,7
+20261021-081442-03-container-service-vulnerable,03-container-service-vulnerable,unknown,Bandit,sast,LOW,3
+20261021-081442-03-container-service-vulnerable,03-container-service-vulnerable,unknown,Bandit,sast,MEDIUM,1
+20261021-081442-03-container-service-vulnerable,03-container-service-vulnerable,unknown,gitleaks,secrets,CRITICAL,6
+20261021-081442-03-container-service-vulnerable,03-container-service-vulnerable,unknown,trivy-fs,sca,HIGH,1
+20261021-081442-03-container-service-vulnerable,03-container-service-vulnerable,unknown,trivy-fs,sca,LOW,1
+20261021-081442-03-container-service-vulnerable,03-container-service-vulnerable,unknown,trivy-fs,secrets,CRITICAL,3
+20261021-081626-03-container-service-fixed,03-container-service-fixed,unknown,Bandit,sast,MEDIUM,1
+20261021-081626-03-container-service-fixed,03-container-service-fixed,unknown,Hadolint,image,MEDIUM,1
+20261021-081626-03-container-service-fixed,03-container-service-fixed,unknown,dockle,image,INFO,1
+20261021-081626-03-container-service-fixed,03-container-service-fixed,unknown,owasp-zap,dast,INFO,1
+20261021-081626-03-container-service-fixed,03-container-service-fixed,unknown,owasp-zap,dast,LOW,1
+20261021-081626-03-container-service-fixed,03-container-service-fixed,unknown,owasp-zap,dast,MEDIUM,1

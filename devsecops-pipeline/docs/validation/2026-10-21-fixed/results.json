@@ -1,0 +1,238 @@
+{
+  "pipeline_source_digest": "acbe04c1314d0700b0c96e0a527a9134971b44dcef64ef8dce91990d51480f50",
+  "runs": [
+    {
+      "run_id": "20261021-093042-01-flask-api-fixed-a81b6c",
+      "workload": "01-flask-api-fixed",
+      "offline": false,
+      "expected": 0,
+      "actual": 0,
+      "findings": 17,
+      "blocking": 0,
+      "suppressed": 1,
+      "warnings": 9,
+      "pipeline_source_digest": "11f87c02d02797d44bf19c562723a9bb55d1f4b2854275b48e405b2ceb7aa19a"
+    },
+    {
+      "run_id": "20261021-093306-01-flask-api-vulnerable-890797",
+      "workload": "01-flask-api-vulnerable",
+      "offline": false,
+      "expected": 1,
+      "actual": 1,
+      "findings": 30,
+      "blocking": 8,
+      "suppressed": 0,
+      "warnings": 19,
+      "pipeline_source_digest": "100ce8a5de160158db8345346a9e6a55f36633b7e3600d378a56d7c09012d040"
+    },
+    {
+      "run_id": "20261021-093408-02-cli-deps-fixed-a92d15",
+      "workload": "02-cli-deps-fixed",
+      "offline": false,
+      "expected": 0,
+      "actual": 0,
+      "findings": 11,
+      "blocking": 0,
+      "suppressed": 1,
+      "warnings": 6,
+      "pipeline_source_digest": "100ce8a5de160158db8345346a9e6a55f36633b7e3600d378a56d7c09012d040"
+    },
+    {
+      "run_id": "20261021-093612-02-cli-deps-vulnerable-a3861a",
+      "workload": "02-cli-deps-vulnerable",
+      "offline": false,
+      "expected": 1,
+      "actual": 1,
+      "findings": 31,
+      "blocking": 4,
+      "suppressed": 0,
+      "warnings": 26,
+      "pipeline_source_digest": "100ce8a5de160158db8345346a9e6a55f36633b7e3600d378a56d7c09012d040"
+    },
+    {
+      "run_id": "20261021-093726-03-container-service-fixed-ad56b9",
+      "workload": "03-container-service-fixed",
+      "offline": false,
+      "expected": 0,
+      "actual": 0,
+      "findings": 10,
+      "blocking": 0,
+      "suppressed": 1,
+      "warnings": 7,
+      "pipeline_source_digest": "acbe04c1314d0700b0c96e0a527a9134971b44dcef64ef8dce91990d51480f50"
+    },
+    {
+      "run_id": "20261021-093956-03-container-service-vulnerable-8c8860",
+      "workload": "03-container-service-vulnerable",
+      "offline": false,
+      "expected": 1,
+      "actual": 1,
+      "findings": 16,
+      "blocking": 10,
+      "suppressed": 0,
+      "warnings": 2,
+      "pipeline_source_digest": "acbe04c1314d0700b0c96e0a527a9134971b44dcef64ef8dce91990d51480f50"
+    },
+    {
+      "run_id": "20261021-094047-01-flask-api-fixed-ffd215",
+      "workload": "01-flask-api-fixed",
+      "offline": true,
+      "expected": 0,
+      "actual": 0,
+      "findings": 17,
+      "blocking": 0,
+      "suppressed": 1,
+      "warnings": 9,
+      "pipeline_source_digest": "acbe04c1314d0700b0c96e0a527a9134971b44dcef64ef8dce91990d51480f50"
+    },
+    {
+      "run_id": "20261021-094239-01-flask-api-vulnerable-39dd26",
+      "workload": "01-flask-api-vulnerable",
+      "offline": true,
+      "expected": 1,
+      "actual": 1,
+      "findings": 30,
+      "blocking": 8,
+      "suppressed": 0,
+      "warnings": 19,
+      "pipeline_source_digest": "acbe04c1314d0700b0c96e0a527a9134971b44dcef64ef8dce91990d51480f50"
+    },
+    {
+      "run_id": "20261021-094326-02-cli-deps-fixed-1c5456",
+      "workload": "02-cli-deps-fixed",
+      "offline": true,
+      "expected": 0,
+      "actual": 0,
+      "findings": 11,
+      "blocking": 0,
+      "suppressed": 1,
+      "warnings": 6,
+      "pipeline_source_digest": "acbe04c1314d0700b0c96e0a527a9134971b44dcef64ef8dce91990d51480f50"
+    },
+    {
+      "run_id": "20261021-094444-02-cli-deps-vulnerable-a201e5",
+      "workload": "02-cli-deps-vulnerable",
+      "offline": true,
+      "expected": 1,
+      "actual": 1,
+      "findings": 31,
+      "blocking": 4,
+      "suppressed": 0,
+      "warnings": 26,
+      "pipeline_source_digest": "acbe04c1314d0700b0c96e0a527a9134971b44dcef64ef8dce91990d51480f50"
+    },
+    {
+      "run_id": "20261021-094540-03-container-service-fixed-51a564",
+      "workload": "03-container-service-fixed",
+      "offline": true,
+      "expected": 0,
+      "actual": 0,
+      "findings": 10,
+      "blocking": 0,
+      "suppressed": 1,
+      "warnings": 7,
+      "pipeline_source_digest": "acbe04c1314d0700b0c96e0a527a9134971b44dcef64ef8dce91990d51480f50"
+    },
+    {
+      "run_id": "20261021-094744-03-container-service-vulnerable-d6b5a1",
+      "workload": "03-container-service-vulnerable",
+      "offline": true,
+      "expected": 1,
+      "actual": 1,
+      "findings": 16,
+      "blocking": 10,
+      "suppressed": 0,
+      "warnings": 2,
+      "pipeline_source_digest": "acbe04c1314d0700b0c96e0a527a9134971b44dcef64ef8dce91990d51480f50"
+    }
+  ],
+  "functional_smokes": [
+    {
+      "run_id": "20261021-092810-01-flask-api-vulnerable-c1536f",
+      "workload": "workloads/01-flask-api/vulnerable",
+      "exit_code": 0
+    },
+    {
+      "run_id": "20261021-092839-01-flask-api-fixed-85e712",
+      "workload": "workloads/01-flask-api/fixed",
+      "exit_code": 0
+    },
+    {
+      "run_id": "20261021-092901-02-cli-deps-vulnerable-2780bb",
+      "workload": "workloads/02-cli-deps/vulnerable",
+      "exit_code": 0
+    },
+    {
+      "run_id": "20261021-092933-02-cli-deps-fixed-1e3bc7",
+      "workload": "workloads/02-cli-deps/fixed",
+      "exit_code": 0
+    },
+    {
+      "run_id": "20261021-092951-03-container-service-vulnerable-de67ea",
+      "workload": "workloads/03-container-service/vulnerable",
+      "exit_code": 0
+    },
+    {
+      "run_id": "20261021-093015-03-container-service-fixed-bc7754",
+      "workload": "workloads/03-container-service/fixed",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "prepare",
+      "exit_code": 0,
+      "seconds": 80.81
+    },
+    {
+      "name": "unit-tests",
+      "exit_code": 0,
+      "seconds": 22.45
+    },
+    {
+      "name": "smoke-01-flask-api-vulnerable",
+      "exit_code": 0,
+      "seconds": 28.41
+    },
+    {
+      "name": "smoke-01-flask-api-fixed",
+      "exit_code": 0,
+      "seconds": 21.72
+    },
+    {
+      "name": "smoke-02-cli-deps-vulnerable",
+      "exit_code": 0,
+      "seconds": 32.88
+    },
+    {
+      "name": "smoke-02-cli-deps-fixed",
+      "exit_code": 0,
+      "seconds": 17.81
+    },
+    {
+      "name": "smoke-03-container-service-vulnerable",
+      "exit_code": 0,
+      "seconds": 24.11
+    },
+    {
+      "name": "smoke-03-container-service-fixed",
+      "exit_code": 0,
+      "seconds": 25.72
+    },
+    {
+      "name": "demo",
+      "exit_code": 0,
+      "seconds": 599.51
+    },
+    {
+      "name": "offline-prepare",
+      "exit_code": 0,
+      "seconds": 6.53
+    },
+    {
+      "name": "offline-demo",
+      "exit_code": 0,
+      "seconds": 4712.31
+    }
+  ]
+}

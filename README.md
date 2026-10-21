@@ -1,17 +1,24 @@
-# DevSecOps Pipeline Lehrprojekt
+# DevSecOps-Pipeline – Lehrprojekt
 
-Dieses Repository enthaelt die Entwurfs- und Entwicklungsdokumentation sowie
-die vollstaendige Pipeline-Implementierung fuer das IT-Sicherheitsprojekt.
+- [Pipeline und Schnellstart](devsecops-pipeline/README.md)
+- [Pipeline und Code erklärt – Vorbereitung auf Prüfungsfragen](devsecops-pipeline/README_PIPELINE_ERKLAERT.md)
+- [Präsentation als bearbeitbare PowerPoint](praesentation/DevSecOps_Pipeline_DHBW.pptx)
+- [Sprechtext zur Präsentation](praesentation/SPRECHTEXT.md)
+- [Präsentationsanleitung mit Rollen und Demo-Ablauf](praesentation/PRAESENTATIONSANLEITUNG.md)
+- [Aktuelle Implementierung](devsecops-pipeline/docs/DEVELOPMENT.md)
+- [Historische Erstvalidierung](devsecops-pipeline/docs/VALIDIERUNG.md)
+- [Nachprüfung der Korrekturen](devsecops-pipeline/docs/NACHPRUEFUNG.md)
+- [Manuelle Findingsbewertung](devsecops-pipeline/docs/FINDINGS_BEWERTUNG.md)
+- [Anforderungsentwurf](Anforderungsanalyse_DevSecOps_Pipeline.md)
+- [Architekturentwurf](Architekturplan_DevSecOps_Pipeline.md)
 
-- [Anforderungsanalyse](./Anforderungsanalyse_DevSecOps_Pipeline.md)
-- [Architekturplan](./Architekturplan_DevSecOps_Pipeline.md)
-- [Entwicklungsdokumentation](./Entwicklungsdokumentation_DevSecOps.md)
-- [Pipeline-Projekt](./devsecops-pipeline/)
-- [Pipeline-README](./devsecops-pipeline/README.md)
+Die automatische Ausführung über GitHub Actions ist bestätigt: Der Workflow
+**DevSecOps demo verification #1** wurde durch den Push von Commit `234b46a`
+auf `validation/pipeline-pruefung` ausgelöst und erfolgreich abgeschlossen.
+Der bereitgestellte GitHub-Actions-Screenshot dokumentiert eine Laufzeit von
+**3 Minuten und 2 Sekunden**.
 
-## Sicherheitshinweis
-
-Die Pipeline enthaelt absichtlich verwundbare Demo-Artefakte. Die Datei
-[`devsecops-pipeline/workloads/03-container-service/vulnerable/.env`](./devsecops-pipeline/workloads/03-container-service/vulnerable/.env)
-ist ein Gitleaks-Testfixture und enthaelt nur kuenstliche Werte. Sie darf
-niemals mit echten Zugangsdaten oder Produktions-URLs befuellt werden.
+Die ausführbaren CI-Konfigurationen und Pre-commit-Konfiguration liegen direkt
+in diesem Git-Stamm. Die Pipeline-Implementierung liegt in `devsecops-pipeline/`.
+Die verwundbaren Varianten enthalten absichtliche Schwachstellen und ausschließlich
+künstliche Demo-Secrets. Niemals echte Zugangsdaten dort eintragen.
