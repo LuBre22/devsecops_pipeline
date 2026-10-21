@@ -2,6 +2,9 @@
 
 - [Pipeline und Schnellstart](devsecops-pipeline/README.md)
 - [Pipeline und Code erklärt – Vorbereitung auf Prüfungsfragen](devsecops-pipeline/README_PIPELINE_ERKLAERT.md)
+- [Präsentation als bearbeitbare PowerPoint](praesentation/DevSecOps_Pipeline_DHBW.pptx)
+- [Sprechtext zur Präsentation](praesentation/SPRECHTEXT.md)
+- [Präsentationsanleitung mit Rollen und Demo-Ablauf](praesentation/PRAESENTATIONSANLEITUNG.md)
 - [Aktuelle Implementierung](devsecops-pipeline/docs/DEVELOPMENT.md)
 - [Historische Erstvalidierung](devsecops-pipeline/docs/VALIDIERUNG.md)
 - [Nachprüfung der Korrekturen](devsecops-pipeline/docs/NACHPRUEFUNG.md)
