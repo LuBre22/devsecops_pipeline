@@ -1,6 +1,7 @@
 # DevSecOps-Pipeline – Lehrprojekt
 
 - [Pipeline und Schnellstart](devsecops-pipeline/README.md)
+- [Pipeline und Code erklärt – Vorbereitung auf Prüfungsfragen](devsecops-pipeline/README_PIPELINE_ERKLAERT.md)
 - [Aktuelle Implementierung](devsecops-pipeline/docs/DEVELOPMENT.md)
 - [Historische Erstvalidierung](devsecops-pipeline/docs/VALIDIERUNG.md)
 - [Nachprüfung der Korrekturen](devsecops-pipeline/docs/NACHPRUEFUNG.md)

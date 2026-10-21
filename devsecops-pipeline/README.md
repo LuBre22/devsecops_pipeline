@@ -4,6 +4,10 @@ Drei Programme, je eine absichtlich verwundbare und eine bereinigte Variante:
 Flask-API, Konfigurations-CLI und HTTP-Dateidienst. Gitleaks, Semgrep, Bandit,
 Trivy, Syft, hadolint, Dockle und OWASP ZAP arbeiten mit einer gemeinsamen Policy.
 
+Für die Vorbereitung auf fachliche Rückfragen erklärt die zusätzliche
+[README „Pipeline und Code erklärt“](README_PIPELINE_ERKLAERT.md) den vollständigen
+Ablauf, die wichtigsten Codestellen, die Entscheidungen und die Grenzen der Nachweise.
+
 ## Start unter Windows und Linux
 
 Voraussetzungen: Python 3.10+, Git und Docker mit Linux-Containern. Docker Desktop
