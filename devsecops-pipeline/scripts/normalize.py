@@ -20,6 +20,7 @@ import json
 import pathlib
 import sys
 from typing import Any, Iterable
+from urllib.parse import urljoin
 
 # Canonical severity ladder used across all tools.
 SEVERITY_ORDER = ["INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"]
@@ -177,7 +178,7 @@ def parse_zap(doc: dict, tool: str = "owasp-zap") -> list[dict]:
                 rule_id=str(alert.get("pluginid", "")),
                 cve_id=(alert.get("cweid") and f"CWE-{alert['cweid']}") or "",
                 title=alert.get("name", ""),
-                location=f"{host}{inst.get('uri', '')}",
+                location=urljoin(host.rstrip('/') + '/', inst.get('uri', '')),
                 remediation=(alert.get("solution") or "")[:300],
             ))
     return out
@@ -198,6 +199,7 @@ def parse_dockle(doc: dict, tool: str = "dockle") -> list[dict]:
             title=d.get("title", ""),
             location="image",
             remediation="; ".join(d.get("alerts") or [])[:300],
+            evidence="; ".join(d.get("alerts") or []),
         ))
     return out
 
@@ -211,16 +213,41 @@ PARSERS = {
 }
 
 
+def validate_report(doc: Any, fmt: str) -> None:
+    """Distinguish an actual empty result from a failed/truncated scanner."""
+    if fmt == 'gitleaks':
+        valid = isinstance(doc, list) and all(isinstance(x, dict) and 'RuleID' in x for x in doc)
+    elif not isinstance(doc, dict):
+        valid = False
+    elif fmt == 'sarif':
+        valid = isinstance(doc.get('runs'), list) and bool(doc['runs'])
+        if valid:
+            valid = all(isinstance(r.get('results'), list) and
+                        all(i.get('executionSuccessful', True) for i in r.get('invocations', []))
+                        for r in doc['runs'])
+    elif fmt == 'trivy':
+        valid = doc.get('SchemaVersion') == 2 and 'ArtifactName' in doc
+    elif fmt == 'dockle':
+        valid = isinstance(doc.get('details'), list) and isinstance(doc.get('summary'), dict)
+    elif fmt == 'zap':
+        valid = isinstance(doc.get('site'), list) and bool(doc['site'])
+    elif fmt == 'sbom':
+        valid = doc.get('bomFormat') == 'CycloneDX' and isinstance(doc.get('components', []), list)
+    else:
+        valid = False
+    if not valid:
+        raise ValueError(f'invalid or unsuccessful {fmt} report')
+
+
 def normalize_file(path: pathlib.Path, fmt: str, tool: str, test_class: str) -> list[dict]:
-    """Parse one raw report. A missing or empty file yields no findings."""
+    """A report is evidence: missing, broken or unsuccessful output is an error."""
     if not path.exists() or path.stat().st_size == 0:
-        print(f"[normalize] skip {path} (missing or empty)", file=sys.stderr)
-        return []
+        raise ValueError(f'missing or empty report: {path}')
     try:
-        doc = json.loads(path.read_text(encoding="utf-8", errors="replace"))
+        doc = json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
-        print(f"[normalize] WARN {path} is not valid JSON: {exc}", file=sys.stderr)
-        return []
+        raise ValueError(f'invalid JSON report: {path}') from exc
+    validate_report(doc, fmt)
     parser = PARSERS[fmt]
     if fmt == "gitleaks":
         return parser(doc, tool)
@@ -231,11 +258,12 @@ def normalize_file(path: pathlib.Path, fmt: str, tool: str, test_class: str) -> 
 
 def dedupe(findings: list[dict]) -> list[dict]:
     """Deduplicate on the finding id, keeping the highest severity."""
-    best: dict[str, dict] = {}
+    best: dict[tuple[str, str], dict] = {}
     for f in findings:
-        prev = best.get(f["id"])
+        key = (f['id'], f['test_class'])
+        prev = best.get(key)
         if prev is None or SEVERITY_ORDER.index(f["severity"]) > SEVERITY_ORDER.index(prev["severity"]):
-            best[f["id"]] = f
+            best[key] = f
     return sorted(
         best.values(),
         key=lambda f: (-SEVERITY_ORDER.index(f["severity"]), f["tool"], f["rule_id"]),

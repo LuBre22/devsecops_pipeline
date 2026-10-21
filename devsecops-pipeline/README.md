@@ -1,229 +1,144 @@
-# DevSecOps Pipeline - Lehrprojekt IT-Sicherheit Modul 6
+# DevSecOps-Pipeline – Lehrprojekt
 
-Automatisierte DevSecOps-Pipeline fuer die Gruppenaufgabe aus Modul 6
-(Sichere Anwendungsentwicklung, DHBW Mosbach). Die Pipeline fuehrt bei jedem
-Commit ohne manuellen Eingriff mehrere Sicherheitswerkzeuge aus, bewertet die
-Ergebnisse gegen eine versionierte Policy und bricht den Build ab, wenn der
-Schwellwert ueberschritten wird.
+Drei Programme, je eine absichtlich verwundbare und eine bereinigte Variante:
+Flask-API, Konfigurations-CLI und HTTP-Dateidienst. Gitleaks, Semgrep, Bandit,
+Trivy, Syft, hadolint, Dockle und OWASP ZAP arbeiten mit einer gemeinsamen Policy.
 
-## Was die Aufgabe fordert und wo es umgesetzt ist
+## Start unter Windows und Linux
 
-| Aufgabenpunkt | Umsetzung |
+Voraussetzungen: Python 3.10+, Git und Docker mit Linux-Containern. Docker Desktop
+muss laufen. Aus dem Git-Stamm zuerst `cd devsecops-pipeline` ausführen.
+Ein `make` oder WSL ist für die Pipeline nicht erforderlich.
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest tests -q
+python scripts/prepare.py
+python scripts/pipeline.py workloads/01-flask-api/vulnerable
+python scripts/pipeline.py workloads/01-flask-api/fixed
+python scripts/demo.py
+```
+
+`prepare.py` lädt die per SHA-256 fixierten Images, baut das Bandit-Toolimage
+einmalig und füllt den persistenten Trivy-Cache. Die ersten Builds der Programme
+installieren ihre exakt versionierten Dependencies. Dafür wird Internet benötigt.
+
+Die Exit-Codes der **einzelnen Pipeline** sind:
+
+| Code | Bedeutung |
 |---|---|
-| Kleine DevSecOps-Pipeline | `scripts/run-pipeline.sh` (lokal), `.gitlab-ci.yml` (CI) |
-| Mindestens 4 Tools | Gitleaks, Semgrep, Bandit, Trivy, Syft, hadolint, Dockle, OWASP ZAP |
-| Automatisierungsmechanismus | `.pre-commit-config.yaml` (bei Commit) und CI-Trigger bei Push/Merge Request |
-| 3 verschiedene Code-Artefakte | `workloads/01-flask-api`, `workloads/02-cli-deps`, `workloads/03-container-service` |
-| Dokumentation der Findings | `reports/FINDINGS_REPORT.md` und `reports/metrics.csv`, automatisch generiert |
-| Praesentation mit Demo | `docs/DEMO_SCRIPT.md` |
+| 0 | Alle ausgeführten Pflichtprüfungen erfolgreich, Policy bestanden |
+| 1 | Erfolgreiche Scans haben blockierende Security-Findings ergeben |
+| 2 | Technischer Fehler, etwa Scanner-Ausfall, kaputter Report, Build- oder Healthcheck-Fehler |
 
-## Schnellstart
+`demo.py` führt alle sechs Varianten aus und prüft die Erwartungen: vulnerable=1,
+fixed=0. Es läuft auch nach einem fehlgeschlagenen Fall weiter und endet nur dann
+mit 0, wenn **alle sechs** Erwartungen eintreten. Ein Scanner-Ausfall (2) gilt nie
+als erfolgreicher Negativtest. Zukünftige CVEs können auch einen Fixed-Lauf
+berechtigt stoppen; dann Findings bewerten und Abhängigkeiten aktualisieren.
 
-Für Windows (ohne make) siehe weiter unten.
+## Ablauf und Automatisierung
 
-Voraussetzungen: Docker (oder Podman), Git, Python 3.10+, Bash. Die Scanner
-laufen als Container mit festgepinnten Versionen. Beim ersten Lauf muessen die
-Images und Scanner-Regeldatenbanken erreichbar sein; mit vorab geladenen Images
-und Cache sind Folge-Laeufe weitgehend lokal reproduzierbar. `make setup` richtet
-pytest und pre-commit fuer Entwickler ein.
+1. Runtime prüfen; ausgewählten Workload ohne Demo-Ausnahmen auf Secrets scannen.
+2. Zusätzlich Git-Historie am tatsächlichen Git-Stamm scannen. Nur die bekannten
+   absichtlichen Negativbeispiele sind im History-Scan ausgenommen.
+3. Lokale, versionierte Semgrep-Regeln und Bandit ausführen.
+4. Trivy-Dateisystemscan und CycloneDX-SBOM mit Syft erzeugen.
+5. CLI tatsächlich bauen/installieren und ohne Netzwerk ausführen; Vorab-Gate.
+6. Web-Image bauen, Trivy und Dockle gegen das exportierte Image prüfen; Image-Gate.
+7. Erst nach bestandenem Image-Gate Webdienst ohne Host-Port und mit internem
+   Netzwerk starten; Healthcheck und funktionale API-Aufrufe sind Pflicht.
+8. ZAP importiert die explizite OpenAPI-Beschreibung. Der API-Scan verwendet
+   `-S` und prüft passiv; er ist kein aktiver SQLi-/XSS-Penetrationstest.
+9. Gate auswerten, Bericht erzeugen und optional in `REGISTRY` veröffentlichen.
+   Ein aktivierter, fehlgeschlagener Push ist ein technischer Fehler.
 
-```bash
-# 1. Repository holen und betreten
-git clone <repo-url> devsecops-pipeline && cd devsecops-pipeline
+CLI-Images werden nach dem Vorab-Gate ebenfalls gescannt; nur HTTP-Deployment
+und ZAP sind mangels HTTP-Schnittstelle ausdrücklich nicht anwendbar.
+Nach Security-Ablehnung werden spätere Schritte nicht gestartet. Nach technischen
+Fehlern werden die vorhandenen Ergebnisse mit Status ERROR dokumentiert.
 
-# 2. Developer-Abhaengigkeiten und Pre-commit-Hooks aktivieren
-make setup
+Die GitHub-Actions-Datei liegt unter **`<Git-Stamm>/.github/workflows/devsecops.yml`**.
+Push und Pull Request starten Unit-Tests und eine Matrix aller sechs Fälle.
+Der grüne CI-Demo-Job belegt die erwarteten positiven und negativen Fälle; die
+Security-Gates der verwundbaren Varianten bleiben in den Artefakten FAIL.
 
-# 3. Ersten Lauf starten: absichtlich verwundbares Artefakt
-scripts/run-pipeline.sh workloads/01-flask-api/vulnerable
-#    -> Gate bricht ab, Exit-Code 1
+Alternativ liegt `<Git-Stamm>/.gitlab-ci.yml` vor. Sie nutzt dieselben Python-Skripte.
+GitLab benötigt einen eigenen Runner mit privilegiertem Docker-in-Docker; diese
+Runner-Einstellung muss am Server gesetzt werden. Es existiert keine zweite,
+abweichende Implementierung der Gates in YAML. Ein tatsächlicher Push-Trigger
+ist erst nach Push dieses Branches zum CI-Dienst nachgewiesen.
 
-# 4. Denselben Code in der bereinigten Variante
-scripts/run-pipeline.sh workloads/01-flask-api/fixed
-#    -> Gate besteht, Exit-Code 0
-
-# 5. Bericht ansehen
-cat reports/FINDINGS_REPORT.md
-```
-
-Alle Varianten in einem Durchgang (sechs Laeufe, erzeugt den vollstaendigen
-Bericht fuer die Praesentation):
-
-```bash
-make demo
-```
-
-Ohne Container-Runtime laesst sich wenigstens die Pipeline-Logik pruefen:
-
-```bash
-make test      # 11 Unit-Tests fuer Normalisierung und Gate, keine Container noetig
-```
-
-## Windows ohne `make`
-
-Wenn `make` unter Windows nicht installiert ist, koennen die Ziele direkt
-aus PowerShell oder Git Bash ausgefuehrt werden. Docker Desktop muss fuer
-echte Pipeline-Laeufe gestartet sein.
-
-PowerShell: in das Pipeline-Verzeichnis wechseln und die Python-Abhaengigkeiten
-installieren beziehungsweise die Unit-Tests ausfuehren:
-
-```powershell
-cd "C:\Users\WN00235115\OneDrive - WGS 365\Documents\DHBW\Semester 5\IT Security (Graupner)\Entwurf_Pipeline\devsecops-pipeline"
-python -m pip install -r .\requirements-dev.txt
-python -m pytest .\tests -vv -s
-```
-
-Die Pipeline selbst besteht aus Bash-Skripten. Deshalb die folgenden Befehle
-in Git Bash oder WSL ausfuehren:
+Die optionale `.pre-commit-config.yaml` liegt ebenfalls am Git-Stamm:
 
 ```bash
-cd "/mnt/c/Users/WN00235115/OneDrive - WGS 365/Documents/DHBW/Semester 5/IT Security (Graupner)/Entwurf_Pipeline/devsecops-pipeline"
-
-# make test - verbose test progress and console output
-python3 -m pytest tests -vv -s
-
-# make scan WORKLOAD=workloads/01-flask-api/vulnerable
-bash scripts/run-pipeline.sh workloads/01-flask-api/vulnerable
-
-# make scan WORKLOAD=workloads/01-flask-api/fixed
-bash scripts/run-pipeline.sh workloads/01-flask-api/fixed
+# Vom Git-Stamm, nachdem pre-commit installiert wurde:
+python -m pre_commit install
 ```
 
-Der Lauf mit `vulnerable` soll das Gate mit Exit-Code `1` abbrechen. Der Lauf
-mit `fixed` soll mit Exit-Code `0` bestehen. Die sechs Laeufe von `make demo`
-entsprechen diesen direkten Aufrufen:
+## Policy, Fehler und Ausnahmen
+
+`policy/thresholds.yaml`: Secrets blockieren immer, SAST ab HIGH, SCA ab CRITICAL,
+Images ab HIGH. DAST-Findings warnen; ein **technisch fehlgeschlagener DAST-Scan**
+blockiert trotzdem. Pflichtreports müssen gültig sein und einen erfolgreichen
+Scannerlauf belegen. Fehlende, leere oder fehlerhafte Reports sind keine sauberen Scans.
+
+`policy/suppressions.json`: Jede Ausnahme braucht Finding-ID, Owner, Begründung
+und ein gültiges Ablaufdatum. Nach Ablauf ist das Finding wieder wirksam.
+SCA- und Image-Kontext bleiben beim Deduplizieren erhalten, damit die strengere
+Image-Policy nicht verloren geht. Der alternative historische OPA-Entwurf ist
+kein unterstützter Einstieg; maßgeblich ist das getestete Python-Gate.
+
+## Ergebnisse
+
+Jeder Lauf schreibt `reports/<UTC-Zeit>-<Workload>-<Zufalls-ID>/`:
+
+- `run.json`: Checkstatus, explizite Auslassungen, Tool-Images und Startzeit.
+- `raw/`: echte Scannerberichte und SBOM.
+- `findings.json`, `gate.json`, `timings.json`: normalisierte Ergebnisse,
+  Entscheidung mit PASS/FAIL/ERROR und Laufzeiten.
+- `reports/FINDINGS_REPORT.md`, `metrics.csv`, `demo-results.json`: Zusammenfassung.
+
+`REPORTS_DIR` kann auf ein separates Ausgabeverzeichnis zeigen.
+Der alte unversionierte `reports/example-run` ist ein Fixture-Beispiel und wird
+vom Reportgenerator nicht als echter Lauf übernommen. Die historische Erstprüfung
+steht in [VALIDIERUNG.md](docs/VALIDIERUNG.md); ihr Ergebnisordner bleibt erhalten.
+Aktuelle Nachweise und Grenzen stehen in [NACHPRUEFUNG.md](docs/NACHPRUEFUNG.md).
+Die manuelle Einordnung findet sich in [FINDINGS_BEWERTUNG.md](docs/FINDINGS_BEWERTUNG.md).
+
+## Funktionstest und Offline-Demo
 
 ```bash
-set +e
-bash scripts/run-pipeline.sh workloads/01-flask-api/vulnerable
-bash scripts/run-pipeline.sh workloads/02-cli-deps/vulnerable
-bash scripts/run-pipeline.sh workloads/03-container-service/vulnerable
-set -e
+# Führt auch ein verwundbares Programm isoliert aus, das das Gate sonst stoppt:
+python scripts/smoke.py workloads/02-cli-deps/vulnerable
 
-bash scripts/run-pipeline.sh workloads/01-flask-api/fixed
-bash scripts/run-pipeline.sh workloads/02-cli-deps/fixed
-bash scripts/run-pipeline.sh workloads/03-container-service/fixed
+# Nach einem vollständigen Online-Durchlauf und lokal gecachten Image-Builds:
+python scripts/prepare.py --offline
+python scripts/demo.py --offline
 ```
 
-Weitere `make`-Ersatzbefehle:
+Der Smoke-Test ist separat gekennzeichnet und belegt ausschließlich Lauffähigkeit.
+Er umgeht kein Gate für Publishing. Die bewusst alte Python-3.8-CLI-Umgebung
+existiert nur für das isolierte Negativbeispiel. Dort sind verwundbare Pakete Absicht.
 
-```powershell
-# make report
-python .\scripts\report.py
-Get-Content .\reports\FINDINGS_REPORT.md
-```
+Offline werden lokale Regeln, installierter Bandit, persistente Trivy-Datenbanken
+und vorgebaute Images verwendet. Deren Tag enthält den Hash der Workload-Dateien.
+Geänderte Quellen oder Dependencies ohne exakt passendes Image müssen mit ERROR enden.
+`--skip-dast` ist ein ausdrücklich dokumentierter Teillauf, kein vollständiger
+DAST-Nachweis. Images, Regeln und aktuelle CVE-Datenbank sind unterschiedliche
+Versionsstände; gleiche Images garantieren bei aktualisierter DB keine gleichen Findings.
 
-```bash
-# make tooling-up
-docker compose -f infra/docker-compose.tooling.yml up -d
+## Optionale Dienste
 
-# make tooling-down
-docker compose -f infra/docker-compose.tooling.yml down -v
+Die Compose-Datei unter `infra/` ist ein experimenteller Tooling-Entwurf für Gitea,
+Vault, DefectDojo und eine Registry. Sie ist nicht Bestandteil des benötigten
+Security-Scan-Pfads. `compose config` validiert nur Syntax. Besonders DefectDojo
+benötigt sein vollständiges offizielles Deployment mit Initialisierung und Worker;
+die kleine Entwurfsdatei ist dafür kein Betriebsnachweis. Gitea allein führt keine
+Pipeline aus. Vault injiziert ohne zusätzliche Runner-Konfiguration keine Secrets.
+`defectdojo_import.py` ist ein optionales, separat aufzurufendes Importwerkzeug;
+inkompatible Dockle-/ZAP-JSON-Dateien werden nicht als SARIF/XML importiert.
 
-# make clean
-rm -rf reports/*/ reports/FINDINGS_REPORT.md reports/metrics.csv
-```
-
-## Die neun Stages
-
-| Stage | Tool | Testklasse | Gate |
-|---|---|---|---|
-| 0 pre-commit | Gitleaks, Semgrep, hadolint | lokal | blockiert den Commit |
-| 1 secrets | Gitleaks | secrets | blockt immer |
-| 2 sast | Semgrep, Bandit | sast | blockt ab HIGH |
-| 3 sca | Trivy fs, Syft (SBOM) | sca | blockt ab CRITICAL |
-| 4 build | hadolint, Image-Build | image | blockt bei Build-Fehler |
-| 5 image-scan | Trivy image, Dockle | image | blockt ab HIGH |
-| 6 deploy-test | ephemere Testinstanz | - | blockt bei Healthcheck-Fehler |
-| 7 dast | OWASP ZAP Baseline | dast | nur Warnung |
-| 8 report | collect, gate, report | alle | finale Entscheidung |
-| 9 publish | Registry-Push, SBOM | - | laeuft nur bei gruenem Gate |
-
-Nach Stage 3 greift ein Vorab-Gate: wenn die billigen Scans schon blockieren,
-werden Build, Deploy und DAST uebersprungen (Fail Fast, Fail Cheap).
-
-## Projektstruktur
-
-```
-.
-|-- .gitlab-ci.yml               CI-Definition (automatischer Trigger)
-|-- .github/workflows/           Fast-Gates als GitHub-Actions-Alternative
-|-- .pre-commit-config.yaml      Stage 0, Shift Left
-|-- .gitleaks.toml               Secret-Scan-Regeln
-|-- Makefile                     alle Einstiegspunkte
-|-- policy/
-|   |-- thresholds.yaml          Gate-Policy als Daten, nicht als Code
-|   |-- suppressions.json        befristete Ausnahmen mit Begruendung
-|   `-- gate.rego                optionale OPA/Conftest-Variante
-|-- scripts/
-|   |-- run-pipeline.sh          lokaler Orchestrator aller neun Stages
-|   |-- stages/0X_*.sh           je Stage ein Skript
-|   |-- normalize.py             Tool-Output -> gemeinsames Finding-Modell
-|   |-- collect.py               Rohreports eines Laufs zusammenfuehren
-|   |-- gate.py                  Policy-Auswertung, Exit-Code 0/1
-|   |-- report.py                Markdown-Bericht und Metriken
-|   `-- defectdojo_import.py     optionale zentrale Findings-Verwaltung
-|-- workloads/                   drei Demo-Artefakte, je vulnerable und fixed
-|-- infra/                       Tooling-Zone: Gitea, Vault, DefectDojo, Registry
-|-- tests/                       Unit-Tests der Pipeline-Logik
-`-- docs/
-    |-- DEVELOPMENT.md           Entwicklungsdokumentation
-    `-- DEMO_SCRIPT.md           Drehbuch fuer die 15 Minuten
-```
-
-## Konfiguration
-
-Alles ueber Umgebungsvariablen, keine Datei muss editiert werden:
-
-| Variable | Bedeutung | Standard |
-|---|---|---|
-| `CONTAINER_RUNTIME` | docker oder podman | automatisch erkannt |
-| `REGISTRY` | Ziel fuer Stage 9; leer = kein Push | leer |
-| `TEST_API_TOKEN` | Secret fuer die Testinstanz | Platzhalter |
-| `DEFECTDOJO_URL` / `DEFECTDOJO_TOKEN` | aktiviert den Findings-Import | leer |
-| `IMG_*` | Ueberschreiben einzelner Tool-Images | gepinnte Versionen |
-
-Die Schwellwerte stehen in `policy/thresholds.yaml`. Eine Aenderung der
-Risikobereitschaft ist eine Datenaenderung, kein Pipeline-Umbau.
-
-## Ergebnisse eines Laufs
-
-```
-reports/
-|-- <run-id>/raw/           unveraenderte Tool-Reports (SARIF, JSON, HTML)
-|-- <run-id>/findings.json  normalisierte Findings
-|-- <run-id>/gate.json      Gate-Entscheidung
-|-- <run-id>/timings.json   Laufzeit je Stage
-|-- FINDINGS_REPORT.md      Bericht ueber alle Laeufe
-`-- metrics.csv             Metriken fuer Auswertung und Diagramme
-```
-
-Im Repository liegt bereits ein Beispiellauf unter
-`reports/20261014-101500-demo-dryrun/`, erzeugt aus den Test-Fixtures. So ist
-der Berichtsaufbau sichtbar, bevor der erste echte Lauf gestartet wurde.
-
-Eine Beschreibung aller Unit-Tests, ihrer Erwartungen und ihrer Grenzen steht
-in [`docs/TESTS.md`](docs/TESTS.md).
-
-## Sicherheitshinweise
-
-- Die Artefakte unter `workloads/*/vulnerable/` enthalten absichtlich
-  Schwachstellen und Platzhalter-Secrets. Nichts davon gehoert in ein echtes
-  Projekt, und die Secrets sind erfundene Beispielwerte.
-- Die Datei `workloads/03-container-service/vulnerable/.env` ist absichtlich
-  Teil des Gitleaks-Demos. Sie enthaelt ausschliesslich kuenstliche Werte, die
-  keine Verbindung zu einem echten Dienst herstellen. Niemals echte
-  Zugangsdaten oder Produktions-URLs in diese Datei eintragen oder in Git
-  committen. Fuer eigene Experimente die Werte lokal durch Testwerte ersetzen
-  und nach dem Lauf wieder entfernen.
-- Der DAST-Scan laeuft ausschliesslich gegen die selbst gestartete, ephemere
-  Testinstanz in einem isolierten Netzwerk. Niemals gegen fremde Systeme.
-- Die Tooling-Zone bindet alle Ports an `127.0.0.1`. Passwoerter kommen aus
-  Umgebungsvariablen, nicht aus der Compose-Datei.
-
-## Lizenz und Herkunft
-
-Lehrprojekt. Die eingesetzten Werkzeuge stehen unter ihren jeweiligen
-Open-Source-Lizenzen; dieses Repository enthaelt nur Konfiguration, Skripte
-und Demo-Code.
+Die absichtlichen Secrets sind erfundene Demo-Werte. Niemals echte Zugangsdaten
+in die Workloads schreiben. Die Pipeline veröffentlicht keine Testports;
+Scans und Smoke-Tests richten sich ausschließlich gegen die eigenen Container.

@@ -22,8 +22,7 @@ SCAN_TYPES = {
     "hadolint.sarif": "SARIF",
     "trivy-fs.json": "Trivy Scan",
     "trivy-image.json": "Trivy Scan",
-    "dockle.json": "SARIF",
-    "zap.json": "ZAP Scan",
+    # Dockle JSON and ZAP JSON are not SARIF/ZAP XML; keep them as local evidence.
 }
 
 
@@ -80,7 +79,7 @@ def main() -> int:
         "active": "true",
         "verified": "false",
         "close_old_findings": "false",
-        "scan_date": datetime.strptime(run["run_id"][:8], "%Y%m%d").date().isoformat(),
+        "scan_date": (run.get('started_at') or datetime.now().date().isoformat())[:10],
         "version": (run.get("commit_hash") or "")[:12],
         "test_title": f"{run.get('workload')} / {run['run_id']}",
     }

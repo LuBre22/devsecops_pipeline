@@ -1,0 +1,70 @@
+# Versioned teaching rules; no remote registry feed.
+rules:
+  - id: request-to-sql
+    languages: [python]
+    mode: taint
+    message: Request input reaches SQL. Use bound parameters.
+    severity: ERROR
+    pattern-sources:
+      - pattern: request.args.get(...)
+    pattern-sinks:
+      - pattern: $DB.execute($QUERY)
+  - id: shell-command
+    languages: [python]
+    message: Avoid shell execution of application data.
+    severity: ERROR
+    pattern-either:
+      - pattern: os.system(...)
+      - pattern: subprocess.$CALL(..., shell=True, ...)
+  - id: unsafe-yaml
+    languages: [python]
+    message: Use yaml.safe_load for configuration.
+    severity: ERROR
+    pattern-either:
+      - pattern: yaml.load($DATA)
+      - pattern: yaml.load(..., Loader=yaml.Loader, ...)
+      - pattern: yaml.unsafe_load(...)
+  - id: disabled-tls-validation
+    languages: [python]
+    message: Certificate validation must be enabled.
+    severity: ERROR
+    pattern: requests.$METHOD(..., verify=False, ...)
+  - id: md5-security-hash
+    languages: [python]
+    message: Use a modern hash for security-sensitive data.
+    severity: ERROR
+    pattern: hashlib.md5(...)
+  - id: flask-debug
+    languages: [python]
+    message: Disable the debugger outside local development.
+    severity: ERROR
+    pattern: $APP.run(..., debug=True, ...)
+  - id: predictable-tempfile
+    languages: [python]
+    message: Atomically create temporary files with NamedTemporaryFile.
+    severity: WARNING
+    pattern: tempfile.mktemp(...)
+  - id: flask-reflected-xss
+    languages: [python]
+    mode: taint
+    message: Escape request data before returning an HTML f-string.
+    severity: ERROR
+    pattern-sources:
+      - pattern: request.args.get(...)
+    pattern-sanitizers:
+      - pattern: escape(...)
+    pattern-sinks:
+      - patterns:
+          - pattern: return f"...{$DATA}..."
+          - focus-metavariable: $DATA
+  - id: http-path-to-file
+    languages: [python]
+    mode: taint
+    message: HTTP request paths must be confined before opening a file.
+    severity: ERROR
+    pattern-sources:
+      - pattern: self.path
+    pattern-sinks:
+      - patterns:
+          - pattern: open($PATH, ...)
+          - focus-metavariable: $PATH

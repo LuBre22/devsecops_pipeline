@@ -1,3 +1,5 @@
+> Historischer Entwurf. Die aktuelle Implementierung und die unterstützten Einstiege sind in der [Pipeline-README](devsecops-pipeline/README.md) dokumentiert.
+
 # Anforderungsanalyse — Gruppenaufgabe "DevSecOps Pipeline"
 
 **Modul:** IT-Sicherheit, Modul 6 — Sichere Anwendungsentwicklung (DHBW Mosbach, Georg Graupner, WiSe 2024)

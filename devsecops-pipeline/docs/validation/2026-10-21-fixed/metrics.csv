@@ -1,0 +1,79 @@
+run_id,workload,commit,tool,test_class,severity,count
+20261021-093042-01-flask-api-fixed-a81b6c,01-flask-api-fixed,826e1bd5,Bandit,sast,LOW,3
+20261021-093042-01-flask-api-fixed-a81b6c,01-flask-api-fixed,826e1bd5,Bandit,sast,MEDIUM,2
+20261021-093042-01-flask-api-fixed-a81b6c,01-flask-api-fixed,826e1bd5,dockle,image,CRITICAL,1
+20261021-093042-01-flask-api-fixed-a81b6c,01-flask-api-fixed,826e1bd5,dockle,image,INFO,1
+20261021-093042-01-flask-api-fixed-a81b6c,01-flask-api-fixed,826e1bd5,owasp-zap,dast,LOW,2
+20261021-093042-01-flask-api-fixed-a81b6c,01-flask-api-fixed,826e1bd5,owasp-zap,dast,MEDIUM,1
+20261021-093042-01-flask-api-fixed-a81b6c,01-flask-api-fixed,826e1bd5,trivy-image,image,LOW,1
+20261021-093042-01-flask-api-fixed-a81b6c,01-flask-api-fixed,826e1bd5,trivy-image,image,MEDIUM,6
+20261021-093306-01-flask-api-vulnerable-890797,01-flask-api-vulnerable,826e1bd5,Bandit,sast,HIGH,3
+20261021-093306-01-flask-api-vulnerable-890797,01-flask-api-vulnerable,826e1bd5,Bandit,sast,MEDIUM,3
+20261021-093306-01-flask-api-vulnerable-890797,01-flask-api-vulnerable,826e1bd5,Semgrep OSS,sast,HIGH,5
+20261021-093306-01-flask-api-vulnerable-890797,01-flask-api-vulnerable,826e1bd5,trivy-fs,sca,HIGH,4
+20261021-093306-01-flask-api-vulnerable-890797,01-flask-api-vulnerable,826e1bd5,trivy-fs,sca,LOW,3
+20261021-093306-01-flask-api-vulnerable-890797,01-flask-api-vulnerable,826e1bd5,trivy-fs,sca,MEDIUM,12
+20261021-093408-02-cli-deps-fixed-a92d15,02-cli-deps-fixed,826e1bd5,dockle,image,CRITICAL,1
+20261021-093408-02-cli-deps-fixed-a92d15,02-cli-deps-fixed,826e1bd5,dockle,image,INFO,2
+20261021-093408-02-cli-deps-fixed-a92d15,02-cli-deps-fixed,826e1bd5,trivy-fs,sca,LOW,1
+20261021-093408-02-cli-deps-fixed-a92d15,02-cli-deps-fixed,826e1bd5,trivy-image,image,LOW,1
+20261021-093408-02-cli-deps-fixed-a92d15,02-cli-deps-fixed,826e1bd5,trivy-image,image,MEDIUM,6
+20261021-093612-02-cli-deps-vulnerable-a3861a,02-cli-deps-vulnerable,826e1bd5,Bandit,sast,HIGH,1
+20261021-093612-02-cli-deps-vulnerable-a3861a,02-cli-deps-vulnerable,826e1bd5,Bandit,sast,MEDIUM,1
+20261021-093612-02-cli-deps-vulnerable-a3861a,02-cli-deps-vulnerable,826e1bd5,Semgrep OSS,sast,HIGH,2
+20261021-093612-02-cli-deps-vulnerable-a3861a,02-cli-deps-vulnerable,826e1bd5,Semgrep OSS,sast,MEDIUM,1
+20261021-093612-02-cli-deps-vulnerable-a3861a,02-cli-deps-vulnerable,826e1bd5,trivy-fs,sca,CRITICAL,1
+20261021-093612-02-cli-deps-vulnerable-a3861a,02-cli-deps-vulnerable,826e1bd5,trivy-fs,sca,HIGH,7
+20261021-093612-02-cli-deps-vulnerable-a3861a,02-cli-deps-vulnerable,826e1bd5,trivy-fs,sca,LOW,1
+20261021-093612-02-cli-deps-vulnerable-a3861a,02-cli-deps-vulnerable,826e1bd5,trivy-fs,sca,MEDIUM,17
+20261021-093726-03-container-service-fixed-ad56b9,03-container-service-fixed,826e1bd5,Bandit,sast,MEDIUM,1
+20261021-093726-03-container-service-fixed-ad56b9,03-container-service-fixed,826e1bd5,dockle,image,CRITICAL,1
+20261021-093726-03-container-service-fixed-ad56b9,03-container-service-fixed,826e1bd5,dockle,image,INFO,1
+20261021-093726-03-container-service-fixed-ad56b9,03-container-service-fixed,826e1bd5,trivy-image,image,LOW,1
+20261021-093726-03-container-service-fixed-ad56b9,03-container-service-fixed,826e1bd5,trivy-image,image,MEDIUM,6
+20261021-093956-03-container-service-vulnerable-8c8860,03-container-service-vulnerable,826e1bd5,Bandit,sast,LOW,3
+20261021-093956-03-container-service-vulnerable-8c8860,03-container-service-vulnerable,826e1bd5,Bandit,sast,MEDIUM,1
+20261021-093956-03-container-service-vulnerable-8c8860,03-container-service-vulnerable,826e1bd5,Semgrep OSS,sast,HIGH,1
+20261021-093956-03-container-service-vulnerable-8c8860,03-container-service-vulnerable,826e1bd5,gitleaks,secrets,CRITICAL,6
+20261021-093956-03-container-service-vulnerable-8c8860,03-container-service-vulnerable,826e1bd5,trivy-fs,sca,HIGH,1
+20261021-093956-03-container-service-vulnerable-8c8860,03-container-service-vulnerable,826e1bd5,trivy-fs,sca,LOW,1
+20261021-093956-03-container-service-vulnerable-8c8860,03-container-service-vulnerable,826e1bd5,trivy-fs,secrets,CRITICAL,3
+20261021-094047-01-flask-api-fixed-ffd215,01-flask-api-fixed,826e1bd5,Bandit,sast,LOW,3
+20261021-094047-01-flask-api-fixed-ffd215,01-flask-api-fixed,826e1bd5,Bandit,sast,MEDIUM,2
+20261021-094047-01-flask-api-fixed-ffd215,01-flask-api-fixed,826e1bd5,dockle,image,CRITICAL,1
+20261021-094047-01-flask-api-fixed-ffd215,01-flask-api-fixed,826e1bd5,dockle,image,INFO,1
+20261021-094047-01-flask-api-fixed-ffd215,01-flask-api-fixed,826e1bd5,owasp-zap,dast,LOW,2
+20261021-094047-01-flask-api-fixed-ffd215,01-flask-api-fixed,826e1bd5,owasp-zap,dast,MEDIUM,1
+20261021-094047-01-flask-api-fixed-ffd215,01-flask-api-fixed,826e1bd5,trivy-image,image,LOW,1
+20261021-094047-01-flask-api-fixed-ffd215,01-flask-api-fixed,826e1bd5,trivy-image,image,MEDIUM,6
+20261021-094239-01-flask-api-vulnerable-39dd26,01-flask-api-vulnerable,826e1bd5,Bandit,sast,HIGH,3
+20261021-094239-01-flask-api-vulnerable-39dd26,01-flask-api-vulnerable,826e1bd5,Bandit,sast,MEDIUM,3
+20261021-094239-01-flask-api-vulnerable-39dd26,01-flask-api-vulnerable,826e1bd5,Semgrep OSS,sast,HIGH,5
+20261021-094239-01-flask-api-vulnerable-39dd26,01-flask-api-vulnerable,826e1bd5,trivy-fs,sca,HIGH,4
+20261021-094239-01-flask-api-vulnerable-39dd26,01-flask-api-vulnerable,826e1bd5,trivy-fs,sca,LOW,3
+20261021-094239-01-flask-api-vulnerable-39dd26,01-flask-api-vulnerable,826e1bd5,trivy-fs,sca,MEDIUM,12
+20261021-094326-02-cli-deps-fixed-1c5456,02-cli-deps-fixed,826e1bd5,dockle,image,CRITICAL,1
+20261021-094326-02-cli-deps-fixed-1c5456,02-cli-deps-fixed,826e1bd5,dockle,image,INFO,2
+20261021-094326-02-cli-deps-fixed-1c5456,02-cli-deps-fixed,826e1bd5,trivy-fs,sca,LOW,1
+20261021-094326-02-cli-deps-fixed-1c5456,02-cli-deps-fixed,826e1bd5,trivy-image,image,LOW,1
+20261021-094326-02-cli-deps-fixed-1c5456,02-cli-deps-fixed,826e1bd5,trivy-image,image,MEDIUM,6
+20261021-094444-02-cli-deps-vulnerable-a201e5,02-cli-deps-vulnerable,826e1bd5,Bandit,sast,HIGH,1
+20261021-094444-02-cli-deps-vulnerable-a201e5,02-cli-deps-vulnerable,826e1bd5,Bandit,sast,MEDIUM,1
+20261021-094444-02-cli-deps-vulnerable-a201e5,02-cli-deps-vulnerable,826e1bd5,Semgrep OSS,sast,HIGH,2
+20261021-094444-02-cli-deps-vulnerable-a201e5,02-cli-deps-vulnerable,826e1bd5,Semgrep OSS,sast,MEDIUM,1
+20261021-094444-02-cli-deps-vulnerable-a201e5,02-cli-deps-vulnerable,826e1bd5,trivy-fs,sca,CRITICAL,1
+20261021-094444-02-cli-deps-vulnerable-a201e5,02-cli-deps-vulnerable,826e1bd5,trivy-fs,sca,HIGH,7
+20261021-094444-02-cli-deps-vulnerable-a201e5,02-cli-deps-vulnerable,826e1bd5,trivy-fs,sca,LOW,1
+20261021-094444-02-cli-deps-vulnerable-a201e5,02-cli-deps-vulnerable,826e1bd5,trivy-fs,sca,MEDIUM,17
+20261021-094540-03-container-service-fixed-51a564,03-container-service-fixed,826e1bd5,Bandit,sast,MEDIUM,1
+20261021-094540-03-container-service-fixed-51a564,03-container-service-fixed,826e1bd5,dockle,image,CRITICAL,1
+20261021-094540-03-container-service-fixed-51a564,03-container-service-fixed,826e1bd5,dockle,image,INFO,1
+20261021-094540-03-container-service-fixed-51a564,03-container-service-fixed,826e1bd5,trivy-image,image,LOW,1
+20261021-094540-03-container-service-fixed-51a564,03-container-service-fixed,826e1bd5,trivy-image,image,MEDIUM,6
+20261021-094744-03-container-service-vulnerable-d6b5a1,03-container-service-vulnerable,826e1bd5,Bandit,sast,LOW,3
+20261021-094744-03-container-service-vulnerable-d6b5a1,03-container-service-vulnerable,826e1bd5,Bandit,sast,MEDIUM,1
+20261021-094744-03-container-service-vulnerable-d6b5a1,03-container-service-vulnerable,826e1bd5,Semgrep OSS,sast,HIGH,1
+20261021-094744-03-container-service-vulnerable-d6b5a1,03-container-service-vulnerable,826e1bd5,gitleaks,secrets,CRITICAL,6
+20261021-094744-03-container-service-vulnerable-d6b5a1,03-container-service-vulnerable,826e1bd5,trivy-fs,sca,HIGH,1
+20261021-094744-03-container-service-vulnerable-d6b5a1,03-container-service-vulnerable,826e1bd5,trivy-fs,sca,LOW,1
+20261021-094744-03-container-service-vulnerable-d6b5a1,03-container-service-vulnerable,826e1bd5,trivy-fs,secrets,CRITICAL,3

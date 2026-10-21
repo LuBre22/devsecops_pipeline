@@ -1,5 +1,7 @@
 # Validierung der DevSecOps-Pipeline
 
+> Historische Erstprüfung. Die nachfolgenden Befunde wurden anschließend korrigiert; aktuelle Ergebnisse und verbleibende Grenzen stehen in [NACHPRUEFUNG.md](NACHPRUEFUNG.md).
+
 Stand: 21.10.2026 (Europe/Berlin). Geprüfter Commit: `63ff468f54079987ad6169c8b02b857fbe323bec` mit dem vorhandenen lokalen Arbeitsstand.
 
 ## Ergebnis

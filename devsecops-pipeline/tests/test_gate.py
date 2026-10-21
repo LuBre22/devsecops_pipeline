@@ -7,6 +7,7 @@ import json
 import pathlib
 import subprocess
 import sys
+import pytest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -29,7 +30,8 @@ def run_gate(findings_path: pathlib.Path):
 def write_run(tmp_path, findings):
     path = tmp_path / "findings.json"
     path.write_text(json.dumps({"run_id": "test", "workload": "unit",
-                                "tools": ["unit"], "findings": findings}))
+                                "tools": ["unit"], "findings": findings,
+                                "scan_status": {"unit": {"status": "ok"}}}))
     return path
 
 
@@ -96,5 +98,6 @@ def test_dedupe_keeps_highest_severity():
     assert len(merged) == 1 and merged[0]["severity"] == "CRITICAL"
 
 
-def test_missing_report_is_tolerated(tmp_path):
-    assert normalize_file(tmp_path / "nope.sarif", "sarif", "semgrep", "sast") == []
+def test_missing_report_is_rejected(tmp_path):
+    with pytest.raises(ValueError, match='missing or empty'):
+        normalize_file(tmp_path / "nope.sarif", "sarif", "semgrep", "sast")

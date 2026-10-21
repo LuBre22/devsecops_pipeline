@@ -1,0 +1,9 @@
+{
+  "kind": "web",
+  "smoke_paths": [
+    "/health",
+    "/user?name=alice",
+    "/greet?name=demo",
+    "/hash?value=demo"
+  ]
+}

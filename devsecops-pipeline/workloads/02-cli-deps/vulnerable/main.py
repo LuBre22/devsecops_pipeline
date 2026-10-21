@@ -3,7 +3,7 @@
 The point of this workload is the dependency tree, not the code: an outdated
 PyYAML and urllib3 are exploitable even when the application code is clean.
 Additional intentional code defects:
-  - yaml.load without a safe loader  (CWE-502, arbitrary object construction)
+  - yaml.unsafe_load                 (CWE-502, arbitrary object construction)
   - TLS verification disabled        (CWE-295)
   - insecure temporary file          (CWE-377)
 """
@@ -17,7 +17,7 @@ import yaml
 def load_config(path: str) -> dict:
     # VULNERABILITY: unsafe deserialisation of untrusted YAML (CWE-502).
     with open(path, "r", encoding="utf-8") as fh:
-        return yaml.load(fh.read())
+        return yaml.unsafe_load(fh.read())
 
 
 def fetch(url: str) -> str:

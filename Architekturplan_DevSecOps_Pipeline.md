@@ -1,3 +1,5 @@
+> Historischer Entwurf. Die aktuelle Implementierung und die unterstützten Einstiege sind in der [Pipeline-README](devsecops-pipeline/README.md) dokumentiert.
+
 # Architekturplan — DevSecOps-Pipeline (Lehrprojekt Modul 6)
 
 **Rolle:** Software-Architekt

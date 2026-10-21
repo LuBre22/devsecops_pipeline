@@ -22,7 +22,7 @@ DB = os.environ.get("DB_PATH", "/tmp/demo.db")
 
 def init_db() -> None:
     with sqlite3.connect(DB) as conn:
-        conn.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER, name TEXT, role TEXT)")
+        conn.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, role TEXT)")
         conn.execute("INSERT OR IGNORE INTO users VALUES (1, 'alice', 'admin')")
 
 

@@ -69,7 +69,15 @@ def load_suppressions(path: pathlib.Path) -> dict[str, dict]:
     today = date.today()
     for entry in doc.get("suppressions", []):
         expires = entry.get("expires_at")
-        if expires and date.fromisoformat(expires) < today:
+        if not expires:
+            print(f"[gate] suppression ignored, missing expiry: {entry.get('finding_id')}")
+            continue
+        try:
+            expiry = date.fromisoformat(expires)
+        except (ValueError, TypeError):
+            print(f"[gate] suppression ignored, invalid expiry: {entry.get('finding_id')}")
+            continue
+        if expiry < today:
             print(f"[gate] suppression expired, re-enabled: {entry.get('finding_id')}")
             continue
         if not entry.get("justification") or not entry.get("owner"):
@@ -92,7 +100,23 @@ def action_for(policy: dict, test_class: str, severity: str) -> str:
                 action = rules[lower]
                 break
     action = (action or "info").lower()
-    return action if action in ACTIONS else "info"
+    if action not in ACTIONS:
+        raise ValueError(f'invalid policy action: {action}')
+    return action
+
+
+def suppression_matches(entry: dict, finding: dict, run: dict) -> bool:
+    """Optional qualifiers make a reviewed exception narrower than a rule ID."""
+    if entry.get('workloads') and run.get('workload') not in entry['workloads']:
+        return False
+    if entry.get('base_image') and entry['base_image'] != run.get('base_image'):
+        return False
+    if entry.get('evidence_contains') and entry['evidence_contains'] not in finding.get('evidence', ''):
+        return False
+    if entry.get('required_check'):
+        if run.get('scan_status', {}).get(entry['required_check'], {}).get('status') != 'ok':
+            return False
+    return True
 
 
 def main() -> int:
@@ -108,19 +132,35 @@ def main() -> int:
         print(f"[gate] ERROR findings file not found: {findings_path}", file=sys.stderr)
         return 2
 
-    run = json.loads(findings_path.read_text())
-    policy = load_yaml(pathlib.Path(args.policy))
-    suppressed = load_suppressions(pathlib.Path(args.suppressions))
+    try:
+        run = json.loads(findings_path.read_text(encoding='utf-8'))
+        policy = load_yaml(pathlib.Path(args.policy))
+        suppressed = load_suppressions(pathlib.Path(args.suppressions))
+    except (ValueError, OSError, KeyError, TypeError) as exc:
+        print(f'[gate] input/configuration error: {exc}', file=sys.stderr)
+        return 2
+    errors = list(run.get('scan_errors', []))
+    statuses = run.get('scan_status', {})
+    if not statuses or not any(s.get('status') == 'ok' for s in statuses.values()):
+        errors.append('No successful checks recorded')
+    errors.extend(f'{name}: {state.get("error", state.get("status"))}'
+                  for name, state in statuses.items() if state.get('status') not in ('ok', 'skipped'))
 
     blocking, warnings, suppressed_hits = [], [], []
     for f in run.get("findings", []):
         if f.get("false_positive"):
             continue
-        if f["id"] in suppressed:
+        if f["id"] in suppressed and suppression_matches(suppressed[f['id']], f, run):
             f["suppressed"] = True
+            f['gate_action'] = 'suppressed'
+            f['suppression'] = suppressed[f['id']]
             suppressed_hits.append(f)
             continue
-        act = action_for(policy, f["test_class"], f["severity"])
+        try:
+            act = action_for(policy, f["test_class"], f["severity"])
+        except (ValueError, KeyError, TypeError) as exc:
+            errors.append(str(exc))
+            continue
         f["gate_action"] = act
         if act == "block":
             blocking.append(f)
@@ -144,15 +184,23 @@ def main() -> int:
     result = {
         "run_id": run.get("run_id"),
         "workload": run.get("workload"),
-        "passed": not blocking,
+        "passed": not blocking and not errors,
+        "status": 'ERROR' if errors else ('FAIL' if blocking else 'PASS'),
+        "errors": sorted(set(errors)),
         "blocking": len(blocking),
         "warnings": len(warnings),
         "suppressed": len(suppressed_hits),
+        "suppressed_findings": suppressed_hits,
+        "decisions": [{'id': f['id'], 'test_class': f['test_class'], 'action': f.get('gate_action', 'ignored')}
+                      for f in run.get('findings', [])],
         "top_blocking": blocking[:5],
     }
     if args.out:
         pathlib.Path(args.out).write_text(json.dumps(result, indent=2))
 
+    if errors:
+        print('\nGATE ERROR - ' + '; '.join(sorted(set(errors))))
+        return 2
     if blocking:
         print("\nGATE FAILED - fix the blocking findings or file a justified, "
               "time-boxed suppression in policy/suppressions.json\n")

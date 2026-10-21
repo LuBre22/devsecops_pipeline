@@ -1,17 +1,14 @@
-# DevSecOps Pipeline Lehrprojekt
+# DevSecOps-Pipeline – Lehrprojekt
 
-Dieses Repository enthaelt die Entwurfs- und Entwicklungsdokumentation sowie
-die vollstaendige Pipeline-Implementierung fuer das IT-Sicherheitsprojekt.
+- [Pipeline und Schnellstart](devsecops-pipeline/README.md)
+- [Aktuelle Implementierung](devsecops-pipeline/docs/DEVELOPMENT.md)
+- [Historische Erstvalidierung](devsecops-pipeline/docs/VALIDIERUNG.md)
+- [Nachprüfung der Korrekturen](devsecops-pipeline/docs/NACHPRUEFUNG.md)
+- [Manuelle Findingsbewertung](devsecops-pipeline/docs/FINDINGS_BEWERTUNG.md)
+- [Anforderungsentwurf](Anforderungsanalyse_DevSecOps_Pipeline.md)
+- [Architekturentwurf](Architekturplan_DevSecOps_Pipeline.md)
 
-- [Anforderungsanalyse](./Anforderungsanalyse_DevSecOps_Pipeline.md)
-- [Architekturplan](./Architekturplan_DevSecOps_Pipeline.md)
-- [Entwicklungsdokumentation](./Entwicklungsdokumentation_DevSecOps.md)
-- [Pipeline-Projekt](./devsecops-pipeline/)
-- [Pipeline-README](./devsecops-pipeline/README.md)
-
-## Sicherheitshinweis
-
-Die Pipeline enthaelt absichtlich verwundbare Demo-Artefakte. Die Datei
-[`devsecops-pipeline/workloads/03-container-service/vulnerable/.env`](./devsecops-pipeline/workloads/03-container-service/vulnerable/.env)
-ist ein Gitleaks-Testfixture und enthaelt nur kuenstliche Werte. Sie darf
-niemals mit echten Zugangsdaten oder Produktions-URLs befuellt werden.
+Die ausführbaren CI-Konfigurationen und Pre-commit-Konfiguration liegen direkt
+in diesem Git-Stamm. Die Pipeline-Implementierung liegt in `devsecops-pipeline/`.
+Die verwundbaren Varianten enthalten absichtliche Schwachstellen und ausschließlich
+künstliche Demo-Secrets. Niemals echte Zugangsdaten dort eintragen.

@@ -1,0 +1,13 @@
+{
+  "gitleaks": "zricethezav/gitleaks@sha256:75bdb2b2f4db213cde0b8295f13a88d6b333091bbfbf3012a4e083d00d31caba",
+  "semgrep": "returntocorp/semgrep@sha256:a9ea2d5621c29d815d90c2a3b2f9571da8972ef4ff855c9e4902681730240e35",
+  "trivy": "aquasec/trivy@sha256:addfb8fd6b9e520c25b22c61d8aa5d58ecd7879177aa959f952bf4734f4e3f60",
+  "syft": "anchore/syft@sha256:f73604d3dc671f09772684b45f35b6646022f0ace6dff42d18fe4c528c098918",
+  "dockle": "goodwithtech/dockle@sha256:68f7473909b49013f97984e9917fb7edd0c440bf15e38f41449860f8a2680d51",
+  "hadolint": "hadolint/hadolint@sha256:3c206a451cec6d486367e758645269fd7d696c5ccb6ff59d8b03b0e45268a199",
+  "zap": "ghcr.io/zaproxy/zaproxy@sha256:5ccfff9a411743ab2615136a2edd7416bec9ce41572fa94e935df38c14adb2b6",
+  "python": "python@sha256:1fd55c2f838c4f76262f9eeed899ff9168ea96ac383c61667d6f204325e1f169",
+  "python-legacy": "python@sha256:e191a71397fd61fbddb6712cd43ef9a2c17df0b5e7ba67607128554cd6bff267",
+  "bandit": "devsecops-bandit:1.7.9-py312-v1",
+  "python-flask-vulnerable": "python@sha256:da5aee29682d12a6649f51c8d6f15b87deb3e6c524b923c41d0cb3304d07c913"
+}
