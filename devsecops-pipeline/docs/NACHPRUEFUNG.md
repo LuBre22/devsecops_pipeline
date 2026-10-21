@@ -78,10 +78,13 @@ ausgenommen. Nach Ablauf ist eine erneute Bewertung nötig.
 
 ## Aussagegrenzen für die Abgabe
 
-Der tatsächliche GitHub-/GitLab-Push-Trigger ist erst nach Push dieses Branches
-zum CI-Dienst nachweisbar. Lokal sind Konfiguration, Orchestrator und alle sechs
-Varianten geprüft. GitLab braucht einen korrekt konfigurierten DinD-Runner.
-Es wurde nichts veröffentlicht; Registry-Push, externe Vault-Injektion und
+Der automatische GitHub-Push-Trigger und der erfolgreiche Workflow-Abschluss
+sind inzwischen durch den bereitgestellten GitHub-Actions-Screenshot bestätigt:
+**DevSecOps demo verification #1**, Commit `234b46a`, Branch
+`validation/pipeline-pruefung`, Laufzeit **3 Minuten und 2 Sekunden**, grüner Gesamtstatus.
+Lokal sind zusätzlich Konfiguration, Orchestrator und alle sechs Varianten geprüft.
+Ein tatsächlicher GitLab-Lauf wurde nicht nachgewiesen; GitLab braucht einen
+korrekt konfigurierten DinD-Runner. Registry-Push, externe Vault-Injektion und
 DefectDojo-Betrieb sind optionale, nicht als funktionierend nachgewiesene Dienste.
 Die kleine Tooling-Compose-Datei bleibt ausdrücklich ein experimenteller Entwurf.
 Für die geforderten mindestens vier Security-Tools werden diese Dienste nicht benötigt.

@@ -63,11 +63,18 @@ Push und Pull Request starten Unit-Tests und eine Matrix aller sechs Fälle.
 Der grüne CI-Demo-Job belegt die erwarteten positiven und negativen Fälle; die
 Security-Gates der verwundbaren Varianten bleiben in den Artefakten FAIL.
 
+**Automatischer Push-Lauf nachgewiesen:** Der bereitgestellte GitHub-Actions-
+Screenshot zeigt den Workflow **DevSecOps demo verification #1** für Commit
+`234b46a` auf `validation/pipeline-pruefung`. Der Lauf wurde durch einen Push
+ausgelöst und mit grünem Gesamtstatus abgeschlossen; Laufzeit: **3 Minuten und
+2 Sekunden**. Damit sind der automatische Start und der erfolgreiche Abschluss
+der GitHub-Demo bestätigt.
+
 Alternativ liegt `<Git-Stamm>/.gitlab-ci.yml` vor. Sie nutzt dieselben Python-Skripte.
 GitLab benötigt einen eigenen Runner mit privilegiertem Docker-in-Docker; diese
 Runner-Einstellung muss am Server gesetzt werden. Es existiert keine zweite,
-abweichende Implementierung der Gates in YAML. Ein tatsächlicher Push-Trigger
-ist erst nach Push dieses Branches zum CI-Dienst nachgewiesen.
+abweichende Implementierung der Gates in YAML. Ein tatsächlicher GitLab-Lauf
+wurde bisher nicht nachgewiesen; der bestätigte Automatisierungsnachweis nutzt GitHub Actions.
 
 Die optionale `.pre-commit-config.yaml` liegt ebenfalls am Git-Stamm:
 
