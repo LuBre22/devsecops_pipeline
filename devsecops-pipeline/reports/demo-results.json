@@ -1,0 +1,50 @@
+[
+  {
+    "workload": "workloads/01-flask-api/fixed",
+    "run_id": "20261022-172848-01-flask-api-fixed-377798",
+    "expected": 0,
+    "actual": 0,
+    "gate_status": "PASS",
+    "matched": true
+  },
+  {
+    "workload": "workloads/01-flask-api/vulnerable",
+    "run_id": "20261022-172952-01-flask-api-vulnerable-8636b1",
+    "expected": 1,
+    "actual": 1,
+    "gate_status": "FAIL",
+    "matched": true
+  },
+  {
+    "workload": "workloads/02-cli-deps/fixed",
+    "run_id": "20261022-173012-02-cli-deps-fixed-02ed6a",
+    "expected": 0,
+    "actual": 0,
+    "gate_status": "PASS",
+    "matched": true
+  },
+  {
+    "workload": "workloads/02-cli-deps/vulnerable",
+    "run_id": "20261022-173051-02-cli-deps-vulnerable-4da41d",
+    "expected": 1,
+    "actual": 1,
+    "gate_status": "FAIL",
+    "matched": true
+  },
+  {
+    "workload": "workloads/03-container-service/fixed",
+    "run_id": "20261022-173115-03-container-service-fixed-fcfd5c",
+    "expected": 0,
+    "actual": 0,
+    "gate_status": "PASS",
+    "matched": true
+  },
+  {
+    "workload": "workloads/03-container-service/vulnerable",
+    "run_id": "20261022-173211-03-container-service-vulnerable-ccd4ce",
+    "expected": 1,
+    "actual": 1,
+    "gate_status": "FAIL",
+    "matched": true
+  }
+]
