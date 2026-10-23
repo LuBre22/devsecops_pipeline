@@ -1,4 +1,4 @@
-# Anleitung für die Präsentierenden
+﻿# Anleitung für die Präsentierenden
 
 Diese Anleitung gehört zur [PowerPoint](DevSecOps_Pipeline_DHBW.pptx) und zum [Sprechtext](SPRECHTEXT.md). Sie beschreibt die Vorbereitung und die konkrete Bedienung während des Vortrags. Stand der archivierten Ergebnisse: 21.10.2026.
 
@@ -60,13 +60,13 @@ Diese Smoke-Tests belegen die Lauffähigkeit und sind keine Security-Freigabe. B
 
 ## 3. Archivierte Nachweise als verlässliche Reserve öffnen
 
-Die Dateien unter [docs/validation/2026-10-21-fixed](../devsecops-pipeline/docs/validation/2026-10-21-fixed) sind gespeicherte Nachweise. Sie werden beim Vortrag ausdrücklich als Ergebnisse vom 21.10.2026 benannt.
+Die Dateien unter [docs/validation/2026-10-21-fixed](../../devsecops-pipeline/docs/validation/2026-10-21-fixed) sind gespeicherte Nachweise. Sie werden beim Vortrag ausdrücklich als Ergebnisse vom 21.10.2026 benannt.
 
 Direkt verfügbar sind:
 
-- [Findings-Bericht aller Programme](../devsecops-pipeline/docs/validation/2026-10-21-fixed/FINDINGS_REPORT.md).
-- [Messwerte und Run-IDs](../devsecops-pipeline/docs/validation/2026-10-21-fixed/results.json).
-- [Rohdatenarchiv](../devsecops-pipeline/docs/validation/2026-10-21-fixed/evidence.zip).
+- [Findings-Bericht aller Programme](../../devsecops-pipeline/docs/validation/2026-10-21-fixed/FINDINGS_REPORT.md).
+- [Messwerte und Run-IDs](../../devsecops-pipeline/docs/validation/2026-10-21-fixed/results.json).
+- [Rohdatenarchiv](../../devsecops-pipeline/docs/validation/2026-10-21-fixed/evidence.zip).
 
 Für einzelne Rohreports und Gate-Dateien das Archiv **vorher** entpacken. Im Projektverzeichnis `devsecops-pipeline` unter PowerShell:
 

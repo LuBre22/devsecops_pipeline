@@ -1,11 +1,11 @@
-# DevSecOps-Pipeline – Lehrprojekt
+﻿# DevSecOps-Pipeline – Lehrprojekt
 
 Drei Programme, je eine absichtlich verwundbare und eine bereinigte Variante:
 Flask-API, Konfigurations-CLI und HTTP-Dateidienst. Gitleaks, Semgrep, Bandit,
 Trivy, Syft, hadolint, Dockle und OWASP ZAP arbeiten mit einer gemeinsamen Policy.
 
 Für die Vorbereitung auf fachliche Rückfragen erklärt die zusätzliche
-[README „Pipeline und Code erklärt“](README_PIPELINE_ERKLAERT.md) den vollständigen
+[README „Pipeline und Code erklärt“](../docs/README_PIPELINE_ERKLAERT.md) den vollständigen
 Ablauf, die wichtigsten Codestellen, die Entscheidungen und die Grenzen der Nachweise.
 
 ## Start unter Windows und Linux
@@ -113,9 +113,9 @@ Jeder Lauf schreibt `reports/<UTC-Zeit>-<Workload>-<Zufalls-ID>/`:
 `REPORTS_DIR` kann auf ein separates Ausgabeverzeichnis zeigen.
 Der alte unversionierte `reports/example-run` ist ein Fixture-Beispiel und wird
 vom Reportgenerator nicht als echter Lauf übernommen. Die historische Erstprüfung
-steht in [VALIDIERUNG.md](docs/VALIDIERUNG.md); ihr Ergebnisordner bleibt erhalten.
-Aktuelle Nachweise und Grenzen stehen in [NACHPRUEFUNG.md](docs/NACHPRUEFUNG.md).
-Die manuelle Einordnung findet sich in [FINDINGS_BEWERTUNG.md](docs/FINDINGS_BEWERTUNG.md).
+steht in [VALIDIERUNG.md](../docs/VALIDIERUNG.md); ihr Ergebnisordner bleibt erhalten.
+Aktuelle Nachweise und Grenzen stehen in [NACHPRUEFUNG.md](../docs/NACHPRUEFUNG.md).
+Die manuelle Einordnung findet sich in [FINDINGS_BEWERTUNG.md](../docs/FINDINGS_BEWERTUNG.md).
 
 ## Funktionstest und Offline-Demo
 

@@ -1,4 +1,4 @@
-# Sprechtext zur DevSecOps-Präsentation
+﻿# Sprechtext zur DevSecOps-Präsentation
 
 Für **Lukas Breuer, Leo Hofmann, Maxim Krüger und Valentin Gehrig** im Fach **IT-Sicherheit bei Herrn Graupner**.
 
@@ -197,9 +197,9 @@ Unsere Toolzuordnung bezieht sich auf die aufgedruckten Foliennummern des Skript
 ## Grundlagen dieses Sprechtexts
 
 - [PowerPoint](DevSecOps_Pipeline_DHBW.pptx) und die darin enthaltenen Sprechernotizen.
-- [Pipeline und Code erklärt](../devsecops-pipeline/README_PIPELINE_ERKLAERT.md).
-- [Nachprüfung](../devsecops-pipeline/docs/NACHPRUEFUNG.md) und [archivierte Messwerte](../devsecops-pipeline/docs/validation/2026-10-21-fixed/results.json).
-- [Manuelle Findingsbewertung](../devsecops-pipeline/docs/FINDINGS_BEWERTUNG.md).
+- [Pipeline und Code erklärt](../README_PIPELINE_ERKLAERT.md).
+- [Nachprüfung](../NACHPRUEFUNG.md) und [archivierte Messwerte](../../devsecops-pipeline/docs/validation/2026-10-21-fixed/results.json).
+- [Manuelle Findingsbewertung](../FINDINGS_BEWERTUNG.md).
 - Bereitgestelltes Vorlesungsskript `06_SecureDevelopment.pdf`, Georg Graupner, Wintersemester 2024.
 
 Bei Änderungen an Folien oder Pipeline den Sprechtext entsprechend aktualisieren. Die Zahlen beschreiben die archivierte Prüfung vom 21.10.2026 und werden nicht automatisch durch neue Scannerläufe ersetzt.

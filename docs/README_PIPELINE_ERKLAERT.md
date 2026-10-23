@@ -1,6 +1,6 @@
-# Unsere DevSecOps-Pipeline verstehen und erklären
+﻿# Unsere DevSecOps-Pipeline verstehen und erklären
 
-Diese README ist die Vorbereitung auf fachliche Rückfragen zur Abgabe. Sie erklärt den aktuellen Code: Was passiert wo, warum wurde es so umgesetzt und was belegen die Ergebnisse? Stand: 21.10.2026. Für die Bedienung gibt es zusätzlich den [Schnellstart](README.md), für die tatsächlich geprüften Ergebnisse die [Nachprüfung](docs/NACHPRUEFUNG.md).
+Diese README ist die Vorbereitung auf fachliche Rückfragen zur Abgabe. Sie erklärt den aktuellen Code: Was passiert wo, warum wurde es so umgesetzt und was belegen die Ergebnisse? Stand: 21.10.2026. Für die Bedienung gibt es zusätzlich den [Schnellstart](../devsecops-pipeline/README.md), für die tatsächlich geprüften Ergebnisse die [Nachprüfung](NACHPRUEFUNG.md).
 
 ## 1. Das Projekt in einer Minute erklären
 
@@ -14,7 +14,7 @@ DevSecOps bedeutet hier: Sicherheitsprüfungen sind wiederholbarer Bestandteil d
 | Automatisierte Security-Prüfung | GitHub Actions bei Push und Pull Request |
 | Mindestens drei lauffähige Programme | Flask-API, Konfigurations-CLI und HTTP-Dateidienst; je zwei Varianten |
 | Ergebnisse und Findings dokumentieren | Rohreports, normalisierte Findings, Gateentscheidung, Gesamtbericht und manuelle Bewertung |
-| Ergebnisse mit Demo erklären | Positive und negative Fälle; [Demo-Ablauf](docs/DEMO_SCRIPT.md) und archivierte Nachweise |
+| Ergebnisse mit Demo erklären | Positive und negative Fälle; [Demo-Ablauf](DEMO_SCRIPT.md) und archivierte Nachweise |
 
 Die Präsentationsdatei ist ein eigenes Abgabeprodukt und wird durch diese README nicht ersetzt.
 
@@ -39,15 +39,15 @@ Es gibt zwei wichtige Verzeichnisse: den **Git-Stamm** mit den CI-Konfiguratione
 
 | Datei | Aufgabe und Grund für die Trennung |
 |---|---|
-| [scripts/prepare.py](scripts/prepare.py) | Bereitet Scanner-Images und Trivy-Cache vor. Downloads müssen nicht in jedem Prüfschritt neu erklärt oder eingerichtet werden. |
-| [scripts/pipeline.py](scripts/pipeline.py) | Zentraler Orchestrator: legt Reihenfolge fest, startet Prozesse, prüft Reports und führt Gates aus. Lokal und in CI gilt derselbe Ablauf. |
-| [scripts/collect.py](scripts/collect.py) | Ordnet Reportdateien ihren Werkzeugen und Testklassen zu, sammelt Findings und Metadaten. |
-| [scripts/normalize.py](scripts/normalize.py) | Übersetzt die unterschiedlichen Scannerformate in ein gemeinsames Finding-Modell. |
-| [scripts/gate.py](scripts/gate.py) | Entscheidet anhand der Policy und zulässiger Ausnahmen über PASS, FAIL oder ERROR. |
-| [scripts/report.py](scripts/report.py) | Erzeugt aus den Ergebnissen einen lesbaren Gesamtbericht und CSV-Metriken. |
-| [scripts/demo.py](scripts/demo.py) | Prüft, ob die vorgesehenen positiven und negativen Fälle tatsächlich eintreten. |
-| [scripts/smoke.py](scripts/smoke.py) | Separater Nachweis der Lauffähigkeit, auch wenn ein verwundbarer Webdienst im normalen Ablauf früh gestoppt wird. |
-| [scripts/run-pipeline.sh](scripts/run-pipeline.sh) | Dünner Bash-Einstieg, der an Python weitergibt; keine zweite Pipeline-Implementierung. |
+| [scripts/prepare.py](../devsecops-pipeline/scripts/prepare.py) | Bereitet Scanner-Images und Trivy-Cache vor. Downloads müssen nicht in jedem Prüfschritt neu erklärt oder eingerichtet werden. |
+| [scripts/pipeline.py](../devsecops-pipeline/scripts/pipeline.py) | Zentraler Orchestrator: legt Reihenfolge fest, startet Prozesse, prüft Reports und führt Gates aus. Lokal und in CI gilt derselbe Ablauf. |
+| [scripts/collect.py](../devsecops-pipeline/scripts/collect.py) | Ordnet Reportdateien ihren Werkzeugen und Testklassen zu, sammelt Findings und Metadaten. |
+| [scripts/normalize.py](../devsecops-pipeline/scripts/normalize.py) | Übersetzt die unterschiedlichen Scannerformate in ein gemeinsames Finding-Modell. |
+| [scripts/gate.py](../devsecops-pipeline/scripts/gate.py) | Entscheidet anhand der Policy und zulässiger Ausnahmen über PASS, FAIL oder ERROR. |
+| [scripts/report.py](../devsecops-pipeline/scripts/report.py) | Erzeugt aus den Ergebnissen einen lesbaren Gesamtbericht und CSV-Metriken. |
+| [scripts/demo.py](../devsecops-pipeline/scripts/demo.py) | Prüft, ob die vorgesehenen positiven und negativen Fälle tatsächlich eintreten. |
+| [scripts/smoke.py](../devsecops-pipeline/scripts/smoke.py) | Separater Nachweis der Lauffähigkeit, auch wenn ein verwundbarer Webdienst im normalen Ablauf früh gestoppt wird. |
+| [scripts/run-pipeline.sh](../devsecops-pipeline/scripts/run-pipeline.sh) | Dünner Bash-Einstieg, der an Python weitergibt; keine zweite Pipeline-Implementierung. |
 
 **Warum Python?** Derselbe Einstieg funktioniert unter Windows und Linux. Der Orchestrator verwendet überwiegend die Standardbibliothek und startet Scanner in Containern. Die CI-Dateien müssen deshalb keine eigene Security-Logik duplizieren. Die YAML-Policy kann mit PyYAML gelesen werden; das Gate hat zusätzlich einen begrenzten Parser für seine einfache Mapping-Struktur, keinen allgemeinen YAML-Ersatz.
 
@@ -80,7 +80,7 @@ Der Einstieg ist beispielsweise:
 python scripts/pipeline.py workloads/01-flask-api/fixed
 ```
 
-Der Pfad bestimmt das Programm und die Variante. Die jeweilige `workload.json` beschreibt, ob es eine CLI oder ein Webdienst ist und welche HTTP-Pfade als Smoke-Test aufgerufen werden. Beispiel: [Flask-Konfiguration](workloads/01-flask-api/fixed/workload.json).
+Der Pfad bestimmt das Programm und die Variante. Die jeweilige `workload.json` beschreibt, ob es eine CLI oder ein Webdienst ist und welche HTTP-Pfade als Smoke-Test aufgerufen werden. Beispiel: [Flask-Konfiguration](../devsecops-pipeline/workloads/01-flask-api/fixed/workload.json).
 
 **Ablaufübersicht:** Die Schritte werden von oben nach unten ausgeführt. Nach einem Gate geht es nur bei PASS weiter.
 
@@ -98,13 +98,13 @@ Der Pfad bestimmt das Programm und die Variante. Die jeweilige `workload.json` b
 | 10. Optional veröffentlichen | Bei PASS und konfigurierter Registry das Image pushen. | Ohne Registry wird Publishing als ausgelassen vermerkt. |
 | 11. Abschluss | Ergebnisse nochmals auswerten, Bericht erzeugen und Testressourcen aufräumen. | Auch nach Ablehnung oder technischem Fehler; `--keep` behält Container und Netzwerk. |
 
-Technische Fehler in den einzelnen Schritten führen ebenfalls in die Fehlerbehandlung. Die Übersicht fasst den Ablauf zusammen; die maßgebliche Implementierung ist `Pipeline.execute()` in [pipeline.py](scripts/pipeline.py).
+Technische Fehler in den einzelnen Schritten führen ebenfalls in die Fehlerbehandlung. Die Übersicht fasst den Ablauf zusammen; die maßgebliche Implementierung ist `Pipeline.execute()` in [pipeline.py](../devsecops-pipeline/scripts/pipeline.py).
 
 ### 4.1 Vorbereitung und statische Prüfungen
 
 Der Konstruktor von `Pipeline` prüft, dass der Workload innerhalb von `workloads/` liegt. Er liest Konfiguration und Image-Lockdatei und erstellt eine eindeutige Run-ID aus UTC-Zeit, Workload und Zufallsanteil. Dadurch werden Berichte verschiedener Läufe getrennt.
 
-`scans()` führt die grundlegenden Scanner nacheinander aus. Der Workload-Secret-Scan verwendet [`.gitleaks-workload.toml`](.gitleaks-workload.toml) ohne Ausnahmen für die absichtlichen Demo-Secrets. Der zusätzliche History-Scan verwendet [`.gitleaks.toml`](.gitleaks.toml), das bekannte Demo-Dateien ausnimmt. So bleibt das gesamte Lehrrepository verwendbar, während der ausgewählte verwundbare Workload seine Secrets trotzdem meldet. Das ist eine besondere Regelung für die Lehrbeispiele, keine Empfehlung für echte Zugangsdaten.
+`scans()` führt die grundlegenden Scanner nacheinander aus. Der Workload-Secret-Scan verwendet [`.gitleaks-workload.toml`](../devsecops-pipeline/.gitleaks-workload.toml) ohne Ausnahmen für die absichtlichen Demo-Secrets. Der zusätzliche History-Scan verwendet [`.gitleaks.toml`](../devsecops-pipeline/.gitleaks.toml), das bekannte Demo-Dateien ausnimmt. So bleibt das gesamte Lehrrepository verwendbar, während der ausgewählte verwundbare Workload seine Secrets trotzdem meldet. Das ist eine besondere Regelung für die Lehrbeispiele, keine Empfehlung für echte Zugangsdaten.
 
 Die Historie wird am tatsächlichen Git-Stamm untersucht. Ohne Git-Checkout wird dieser Check ausdrücklich als ausgelassen protokolliert. Im GitHub-Workflow sorgt `fetch-depth: 0` dafür, dass die Historie vollständig ausgecheckt wird.
 
@@ -192,7 +192,7 @@ Bei der Deduplizierung bildet **Finding-ID plus Testklasse** den Schlüssel. Die
 
 ### 5.2 Die konkrete Gate-Policy
 
-Maßgeblich ist [policy/thresholds.yaml](policy/thresholds.yaml), ausgewertet durch das Python-Gate. Der ältere [OPA-Entwurf](policy/gate.rego) gehört nicht zum unterstützten Ausführungspfad.
+Maßgeblich ist [policy/thresholds.yaml](../devsecops-pipeline/policy/thresholds.yaml), ausgewertet durch das Python-Gate. Der ältere [OPA-Entwurf](../devsecops-pipeline/policy/gate.rego) gehört nicht zum unterstützten Ausführungspfad.
 
 | Testklasse | Blockiert | Warnt | Nur Information |
 |---|---|---|---|
@@ -224,7 +224,7 @@ Die Reportprüfung kontrolliert erwartete Grundstrukturen, bei SARIF auch gemeld
 
 ### 6.1 Flask-API: Eingaben dürfen nicht zu Code werden
 
-Dateien: [verwundbares app.py](workloads/01-flask-api/vulnerable/app.py), [bereinigtes app.py](workloads/01-flask-api/fixed/app.py).
+Dateien: [verwundbares app.py](../devsecops-pipeline/workloads/01-flask-api/vulnerable/app.py), [bereinigtes app.py](../devsecops-pipeline/workloads/01-flask-api/fixed/app.py).
 
 Die API verwendet eine kleine SQLite-Datenbank und bietet unter anderem `/user`, `/greet`, `/ping`, `/hash` und `/health`. Die Schwachstellen wurden absichtlich eingebaut, um mehrere Prüfklassen anschaulich zu machen.
 
@@ -246,13 +246,13 @@ rows = conn.execute(
 
 Der Platzhalter wird vom Datenbanktreiber als Wert gebunden. Ein Apostroph in `name` wird dadurch nicht Teil eines neuen SQL-Befehls. Das Komma in `(name,)` erzeugt ein Tupel mit genau einem Element. Die zusätzliche Begrenzung auf 64 Zeichen ersetzt diese Parameterbindung nicht.
 
-**Wie findet Semgrep das?** Die Regel `request-to-sql` in [semgrep.yml](policy/semgrep.yml) markiert `request.args.get(...)` als Quelle unzuverlässiger Daten und den passenden Datenbankaufruf als Senke. Bei der XSS-Regel ist `escape(...)` als Bereinigung angegeben. Insgesamt sind es neun lokale Lehrregeln, kein vollständiges Regelpaket für alle möglichen Schwachstellen.
+**Wie findet Semgrep das?** Die Regel `request-to-sql` in [semgrep.yml](../devsecops-pipeline/policy/semgrep.yml) markiert `request.args.get(...)` als Quelle unzuverlässiger Daten und den passenden Datenbankaufruf als Senke. Bei der XSS-Regel ist `escape(...)` als Bereinigung angegeben. Insgesamt sind es neun lokale Lehrregeln, kein vollständiges Regelpaket für alle möglichen Schwachstellen.
 
 **Grenzen:** SHA-256 allein ist kein geeignetes Passwortspeicherverfahren. Die Ping-Funktion prüft die Rückgabe des Ping-Prozesses nicht auf Erreichbarkeit. Auch die bereinigte API läuft mit dem Flask-Entwicklungsserver; das Beispiel ist keine fertige Produktionsbereitstellung.
 
 ### 6.2 Konfigurations-CLI: Parser, TLS und Abhängigkeiten
 
-Dateien: [verwundbares main.py](workloads/02-cli-deps/vulnerable/main.py), [bereinigtes main.py](workloads/02-cli-deps/fixed/main.py), [bereinigte Dependencies](workloads/02-cli-deps/fixed/requirements.txt).
+Dateien: [verwundbares main.py](../devsecops-pipeline/workloads/02-cli-deps/vulnerable/main.py), [bereinigtes main.py](../devsecops-pipeline/workloads/02-cli-deps/fixed/main.py), [bereinigte Dependencies](../devsecops-pipeline/workloads/02-cli-deps/fixed/requirements.txt).
 
 `main()` liest `--config`, lädt YAML und gibt die Anzahl der Konfigurationsschlüssel aus. Zusätzlich enthält das Programm exemplarische Funktionen zum Abrufen einer URL und zum Zwischenspeichern von Text. Diese beiden Funktionen werden vom normalen CLI-Start nicht aufgerufen. Ihre statischen Findings sind daher von einer tatsächlich im Smoke-Test ausgeführten Schwachstelle zu unterscheiden.
 
@@ -269,7 +269,7 @@ Die alten Komponenten im Negativbeispiel sind absichtlich kompatibel ausgewählt
 
 ### 6.3 HTTP-Dateidienst: Secrets und Pfadbegrenzung
 
-Dateien: [verwundbares app.py](workloads/03-container-service/vulnerable/app.py), [bereinigtes app.py](workloads/03-container-service/fixed/app.py).
+Dateien: [verwundbares app.py](../devsecops-pipeline/workloads/03-container-service/vulnerable/app.py), [bereinigtes app.py](../devsecops-pipeline/workloads/03-container-service/fixed/app.py).
 
 Das Beispiel verwendet `http.server` und `socketserver` aus der Python-Standardbibliothek. Die verwundbare Variante enthält künstliche Zugangsdaten im Code und zusätzliche Demo-Dateien. Beim Dateizugriff wird der angefragte Name direkt an `/app/data/` angehängt. Mit `../` könnte ein Pfad aus diesem Verzeichnis herausführen.
 
@@ -292,7 +292,7 @@ Der feste Token wurde durch `os.environ.get("API_TOKEN")` ersetzt. Ohne Token st
 
 ### 7.1 Dockerfile lesen können
 
-Am [bereinigten Flask-Dockerfile](workloads/01-flask-api/fixed/Dockerfile) lassen sich die wesentlichen Anweisungen erklären:
+Am [bereinigten Flask-Dockerfile](../devsecops-pipeline/workloads/01-flask-api/fixed/Dockerfile) lassen sich die wesentlichen Anweisungen erklären:
 
 | Anweisung | Bedeutung |
 |---|---|
@@ -316,7 +316,7 @@ Die Webdienste laufen mit schreibgeschütztem Dateisystem, temporärem `/tmp`, e
 
 ### 7.3 Reproduzierbarkeit und Cache
 
-[images.lock.json](policy/images.lock.json) fixiert externe Tool- und Basisimages über Digests. Das Bandit-Toolimage wird lokal aus dem festgelegten Basisimage und versionierten Paketanforderungen gebaut. Zusätzlich werden die tatsächlich verwendeten Image-IDs protokolliert.
+[images.lock.json](../devsecops-pipeline/policy/images.lock.json) fixiert externe Tool- und Basisimages über Digests. Das Bandit-Toolimage wird lokal aus dem festgelegten Basisimage und versionierten Paketanforderungen gebaut. Zusätzlich werden die tatsächlich verwendeten Image-IDs protokolliert.
 
 Ein Quellenhash entsteht aus den Workload-Dateipfaden und Dateiinhalten. Seine ersten 20 Zeichen bilden den lokalen Anwendungs-Image-Tag. `pipeline_source_digest` identifiziert zusätzlich wesentliche Implementierungs- und Policy-Dateien. Das dient der Zuordnung von Ergebnissen, nicht einer digitalen Signatur oder einem Sicherheitsnachweis des Codes.
 
@@ -330,13 +330,13 @@ Im Offline-Modus werden keine fehlenden Anwendungsimages nachgebaut. Das exakt z
 
 Ein PASS bedeutet, dass die festgelegte Policy bestanden wurde. Es bedeutet weder null Findings noch null Restrisiko.
 
-Die aktuelle [suppressions.json](policy/suppressions.json) enthält eine überprüfte Ausnahme für `dockle:DKL-DI-0004`. Dockle interpretiert einen geerbten Paketmanager-Befehl des offiziellen Python-Alpine-Images als problematische Cache-Nutzung. Die Bewertung berücksichtigt, dass der erste Installationsschritt `--no-cache` verwendet und ein späterer Schritt lokale Laufzeitabhängigkeiten mit `--no-network` auflöst. Zusätzlich muss die Prüfung `package-cache-empty` erfolgreich sein.
+Die aktuelle [suppressions.json](../devsecops-pipeline/policy/suppressions.json) enthält eine überprüfte Ausnahme für `dockle:DKL-DI-0004`. Dockle interpretiert einen geerbten Paketmanager-Befehl des offiziellen Python-Alpine-Images als problematische Cache-Nutzung. Die Bewertung berücksichtigt, dass der erste Installationsschritt `--no-cache` verwendet und ein späterer Schritt lokale Laufzeitabhängigkeiten mit `--no-network` auflöst. Zusätzlich muss die Prüfung `package-cache-empty` erfolgreich sein.
 
 Diese Ausnahme gilt nur für die drei benannten Fixed-Workloads, den exakten Basisimage-Digest und den erwarteten Befehl im Befund. Sie hat einen Owner, eine Begründung und das **Ablaufdatum 20.11.2026**. Nach Ablauf oder bei abweichendem Kontext darf sie das Finding nicht mehr unterdrücken. Vor einem späteren Vortrag muss sie überprüft werden.
 
 Der Rohbefund bleibt erhalten, und die Gateentscheidung weist die Ausnahme aus. Es handelt sich damit um eine nachvollziehbare Einzelfallbewertung. Eine unbegründete globale Abschaltung der Regel würde diese Nachvollziehbarkeit verlieren.
 
-Die [manuelle Findingsbewertung](docs/FINDINGS_BEWERTUNG.md) unterscheidet echte Codeprobleme, kontextabhängige Meldungen und den geprüften Fehlalarm. Das Feld `false_positive` wird vom Normalizer nicht automatisch als fachliche Bewertung gesetzt; eine False-Positive-Quote lässt sich nicht einfach aus der Zahl grüner Läufe ableiten.
+Die [manuelle Findingsbewertung](FINDINGS_BEWERTUNG.md) unterscheidet echte Codeprobleme, kontextabhängige Meldungen und den geprüften Fehlalarm. Das Feld `false_positive` wird vom Normalizer nicht automatisch als fachliche Bewertung gesetzt; eine False-Positive-Quote lässt sich nicht einfach aus der Zahl grüner Läufe ableiten.
 
 ## 9. Wie startet GitHub die Pipeline automatisch?
 
@@ -395,7 +395,7 @@ Für jeden normalen Lauf entsteht ein eigener Ordner unter `reports/`. Am besten
 
 Nach einem frühen Gate-Abbruch sind spätere Scans nicht durchgeführt. Fehlende spätere Checks sind dann kein Nachweis, dass diese Prüfungen bestanden wurden. Das Manifest unterscheidet solche Abläufe von ausdrücklich protokollierten Auslassungen, etwa ZAP bei einer CLI.
 
-Die archivierte [Nachprüfung](docs/NACHPRUEFUNG.md) enthält zwölf echte Security-Läufe, sechs online und sechs offline, sowie sechs separate funktionale Smoke-Tests. Die folgenden Zahlen stammen aus [results.json](docs/validation/2026-10-21-fixed/results.json), jeweils aus den vollständigen Offline-Läufen:
+Die archivierte [Nachprüfung](NACHPRUEFUNG.md) enthält zwölf echte Security-Läufe, sechs online und sechs offline, sowie sechs separate funktionale Smoke-Tests. Die folgenden Zahlen stammen aus [results.json](../devsecops-pipeline/docs/validation/2026-10-21-fixed/results.json), jeweils aus den vollständigen Offline-Läufen:
 
 | Programm | Vulnerable | Blockierende Findings | Fixed | Geprüfte Ausnahmen bei Fixed |
 |---|---|---|---|---|
@@ -403,7 +403,7 @@ Die archivierte [Nachprüfung](docs/NACHPRUEFUNG.md) enthält zwölf echte Secur
 | Konfigurations-CLI | FAIL / 1 | 4 | PASS / 0 | 1 |
 | HTTP-Dateidienst | FAIL / 1 | 10 | PASS / 0 | 1 |
 
-Weitere Nachweise: [archivierter Findings-Bericht](docs/validation/2026-10-21-fixed/FINDINGS_REPORT.md) und [Evidence-Archiv](docs/validation/2026-10-21-fixed/evidence.zip). Bei den Tests bestehen laut dokumentierter Nachprüfung 41 aktuelle Tests unter Linux; zusammen mit neun zusätzlichen ursprünglichen Akzeptanzprüfungen wurden unter Windows 50 Tests bestanden. Die reguläre Testsuite unter `tests/` ist daher nicht mit 50 Tests zu beschriften.
+Weitere Nachweise: [archivierter Findings-Bericht](../devsecops-pipeline/docs/validation/2026-10-21-fixed/FINDINGS_REPORT.md) und [Evidence-Archiv](../devsecops-pipeline/docs/validation/2026-10-21-fixed/evidence.zip). Bei den Tests bestehen laut dokumentierter Nachprüfung 41 aktuelle Tests unter Linux; zusammen mit neun zusätzlichen ursprünglichen Akzeptanzprüfungen wurden unter Windows 50 Tests bestanden. Die reguläre Testsuite unter `tests/` ist daher nicht mit 50 Tests zu beschriften.
 
 Der lokale Online-Durchlauf aller sechs Fälle dauerte ungefähr zehn Minuten. Ein Offline-History-Scan zeigte eine nicht abschließend erklärte Pause von rund 4265 Sekunden. Diese Werte sind keine belastbaren Benchmarks. Die sechs GitHub-Matrixfälle können parallel laufen; ihre Gesamtdauer ist deshalb nicht direkt mit der lokalen sequenziellen Suite vergleichbar.
 
@@ -457,7 +457,7 @@ Die wichtigsten optionalen Einstellungen werden über die Umgebung oder Startarg
 
 Die letzten beiden Argumente gehören zu `pipeline.py`; `demo.py` bietet davon nur `--offline` sowie seine Workload-Auswahl an.
 
-Für den Vortrag vorher vorwärmen und ein bis zwei Fälle live zeigen. Die übrigen Ergebnisse anhand des Archivs erläutern und eine Aufnahme als Reserve bereithalten. Der [Demo-Leitfaden](docs/DEMO_SCRIPT.md) hilft bei der Zeitplanung.
+Für den Vortrag vorher vorwärmen und ein bis zwei Fälle live zeigen. Die übrigen Ergebnisse anhand des Archivs erläutern und eine Aufnahme als Reserve bereithalten. Der [Demo-Leitfaden](DEMO_SCRIPT.md) hilft bei der Zeitplanung.
 
 ## 13. Typische Prüfungsfragen mit belastbaren Antworten
 
@@ -502,6 +502,6 @@ Damit lässt sich die Verbindung zwischen **Codefehler, Scannerregel, Report, Po
 
 Der nachgewiesene Kern umfasst die drei Programme, Scanner-Orchestrierung, Gates, Reports, lokale Online-/Offline-Nachweise und den bestätigten GitHub-Push-Lauf. Die automatisierten Tests sichern ausgewählte Fehlerfälle und Regressionen ab.
 
-[infra/docker-compose.tooling.yml](infra/docker-compose.tooling.yml) ist ein experimenteller Entwurf für zusätzliche Dienste. Ein erfolgreiches `compose config` würde nur die Konfiguration prüfen. Es belegt weder einen funktionierenden DefectDojo-Betrieb noch Vault-Injektion oder Registry-Veröffentlichung. [defectdojo_import.py](scripts/defectdojo_import.py) ist ein separat aufzurufendes optionales Importwerkzeug. Auch eine lokal kopierte SBOM ist keine signierte Registry-Attestation.
+[infra/docker-compose.tooling.yml](../devsecops-pipeline/infra/docker-compose.tooling.yml) ist ein experimenteller Entwurf für zusätzliche Dienste. Ein erfolgreiches `compose config` würde nur die Konfiguration prüfen. Es belegt weder einen funktionierenden DefectDojo-Betrieb noch Vault-Injektion oder Registry-Veröffentlichung. [defectdojo_import.py](../devsecops-pipeline/scripts/defectdojo_import.py) ist ein separat aufzurufendes optionales Importwerkzeug. Auch eine lokal kopierte SBOM ist keine signierte Registry-Attestation.
 
-In der Prüfung deshalb immer vom **belegten Umfang** ausgehen: zeigen, welche Checks wirklich liefen, welches Ergebnis sie meldeten und welche Entscheidung unsere Policy daraus getroffen hat. Für aktuelle Messwerte und Grenzen bleiben [NACHPRUEFUNG.md](docs/NACHPRUEFUNG.md) und die zugehörigen Rohdaten maßgeblich.
+In der Prüfung deshalb immer vom **belegten Umfang** ausgehen: zeigen, welche Checks wirklich liefen, welches Ergebnis sie meldeten und welche Entscheidung unsere Policy daraus getroffen hat. Für aktuelle Messwerte und Grenzen bleiben [NACHPRUEFUNG.md](NACHPRUEFUNG.md) und die zugehörigen Rohdaten maßgeblich.
